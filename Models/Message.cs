@@ -24,7 +24,7 @@ public class Message
     public DateTime SendAt {get; set;} = DateTime.UtcNow;
 
     [BsonElement("reply_to_story_id")]
-    public string? ReplyToStoryId {get; set;}
+    public string? ReplyToStoryId {get; set;} 
 
 
 

@@ -40,3 +40,4 @@ D:\HK5\CS526\LocketAPI\obj\Debug\net8.0\LocketAPI.genruntimeconfig.cache
 D:\HK5\CS526\LocketAPI\obj\Debug\net8.0\ref\LocketAPI.dll
 D:\HK5\CS526\LocketAPI\bin\Debug\net8.0\Newtonsoft.Json.dll
 D:\HK5\CS526\LocketAPI\bin\Debug\net8.0\System.Net.WebSockets.WebSocketProtocol.dll
+D:\HK5\CS526\LocketAPI\obj\Debug\net8.0\LocketAPI.sourcelink.json

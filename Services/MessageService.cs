@@ -26,21 +26,22 @@ public class MessageService
         return await _messageCollection.Find(message => message.SenderId == id).ToListAsync();
     }
 
-    public async Task<List<Message>> GetAllUserMessageReceivedAsync(string id)
-    {
-        return await _messageCollection.Find(message => message.ReceiverId == id).ToListAsync();
-    }
+    // public async Task<List<Message>> GetAllUserMessageReceivedAsync(string id)
+    // {
+    //     return await _messageCollection.Find(message => message.ReceiverId == id).ToListAsync();
+    // }
 
-    public async Task<List<Message>> GetAllMessageSendedFrom2UserAsync(string senderid, string receivedid)
-    {
-        return await _messageCollection.Find(message => message.SenderId == senderid && message.ReceiverId == receivedid).ToListAsync();
-    }
-    public async Task<List<Message>> GetAllMessageFrom2UserAsync(string user1, string user2)
-    {
-        return await _messageCollection.Find(message => (
-            message.SenderId == user1 || message.SenderId == user2 && message.ReceiverId == user1 || message.ReceiverId == user2
-            )).ToListAsync();
-    }
+    // public async Task<List<Message>> GetAllMessageSendedFrom2UserAsync(string senderid, string receivedid)
+    // {
+    //     return await _messageCollection.Find(message => message.SenderId == senderid && message.ReceiverId == receivedid).ToListAsync();
+    // }
+    // public async Task<List<Message>> GetAllMessageFrom2UserAsync(string user1, string user2)
+    // {
+    //     return await _messageCollection.Find(message => (
+    //         message.SenderId == user1 || message.SenderId == user2 && message.ReceiverId == user1 || message.ReceiverId == user2
+    //         )).ToListAsync();
+    // }
+    
     //UPDATE
     public async Task<bool> UpdateOneMessageAysnc(string userid, Message messageUpdate)
     {

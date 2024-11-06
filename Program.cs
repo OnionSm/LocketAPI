@@ -25,6 +25,10 @@ builder.Services.AddScoped(s =>
 
 // Đăng ký UserService
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<ConversationService>();
+builder.Services.AddScoped<MessageService>();
+builder.Services.AddScoped<UserConversationService>();
+builder.Services.AddScoped<UserFriendRequestService>();
 
 // Đăng ký Controller
 builder.Services.AddControllers();
