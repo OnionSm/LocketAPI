@@ -16,7 +16,7 @@ public class Conversation
     public List<Message> ListMessages {get; set;} = new List<Message>();
 
     [BsonElement("last_message")]
-    public Message LastMessage { get; set; } = new Message();
+    public Message? LastMessage { get; set; }
 
     [BsonElement("created_at")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

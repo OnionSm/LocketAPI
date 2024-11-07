@@ -11,44 +11,28 @@ public class MessageService
     }
 
     //CREATE
-    public async Task CreatMessageAsync(Message message)
+    public async Task CreatMessageAsync(Message message, IClientSessionHandle session)
     {
-        await _messageCollection.InsertOneAsync(message);
+        await _messageCollection.InsertOneAsync(session, message);
     }
 
     //READ
-    public async Task<Message> GetMessageByIdAsync(string id)
+    public async Task<Message> GetMessageByIdAsync(string id, IClientSessionHandle session)
     {
-        return await _messageCollection.Find(message => message.Id == id).FirstOrDefaultAsync();
+        return await _messageCollection.Find(session, message => message.Id == id).FirstOrDefaultAsync();
     }
-    public async Task<List<Message>> GetAllUserMessageSendedAsync(string id)
+    public async Task<List<Message>> GetAllUserMessageSendedAsync(string id, IClientSessionHandle session)
     {
-        return await _messageCollection.Find(message => message.SenderId == id).ToListAsync();
+        return await _messageCollection.Find(session, message => message.SenderId == id).ToListAsync();
     }
 
-    // public async Task<List<Message>> GetAllUserMessageReceivedAsync(string id)
-    // {
-    //     return await _messageCollection.Find(message => message.ReceiverId == id).ToListAsync();
-    // }
-
-    // public async Task<List<Message>> GetAllMessageSendedFrom2UserAsync(string senderid, string receivedid)
-    // {
-    //     return await _messageCollection.Find(message => message.SenderId == senderid && message.ReceiverId == receivedid).ToListAsync();
-    // }
-    // public async Task<List<Message>> GetAllMessageFrom2UserAsync(string user1, string user2)
-    // {
-    //     return await _messageCollection.Find(message => (
-    //         message.SenderId == user1 || message.SenderId == user2 && message.ReceiverId == user1 || message.ReceiverId == user2
-    //         )).ToListAsync();
-    // }
-    
     //UPDATE
-    public async Task<bool> UpdateOneMessageAysnc(string userid, Message messageUpdate)
+    public async Task<bool> UpdateOneMessageAysnc(string userid, Message messageUpdate, IClientSessionHandle session)
     {
         var updateDefinition = Builders<Message>.Update
         .Set(m => m.Content, messageUpdate.Content);
 
-        var result = await _messageCollection.UpdateOneAsync(
+        var result = await _messageCollection.UpdateOneAsync(session,
         message => message.SenderId == userid,
         updateDefinition);
 
@@ -57,11 +41,10 @@ public class MessageService
 
 
     //DELETE 
-    public async Task<bool> DeleteOneMessageAsync(string messageId)
+    public async Task<bool> DeleteOneMessageAsync(string messageId, IClientSessionHandle session)
     {
-        var result = await _messageCollection.DeleteOneAsync(message => message.Id == messageId);
+        var result = await _messageCollection.DeleteOneAsync(session, message => message.Id == messageId);
 
         return result.IsAcknowledged && result.DeletedCount > 0;
     }
-
 }
