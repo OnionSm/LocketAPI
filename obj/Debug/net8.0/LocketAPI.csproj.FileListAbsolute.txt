@@ -41,3 +41,11 @@ D:\HK5\CS526\LocketAPI\obj\Debug\net8.0\ref\LocketAPI.dll
 D:\HK5\CS526\LocketAPI\bin\Debug\net8.0\Newtonsoft.Json.dll
 D:\HK5\CS526\LocketAPI\bin\Debug\net8.0\System.Net.WebSockets.WebSocketProtocol.dll
 D:\HK5\CS526\LocketAPI\obj\Debug\net8.0\LocketAPI.sourcelink.json
+D:\HK5\CS526\LocketAPI\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\HK5\CS526\LocketAPI\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+D:\HK5\CS526\LocketAPI\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\HK5\CS526\LocketAPI\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+D:\HK5\CS526\LocketAPI\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+D:\HK5\CS526\LocketAPI\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\HK5\CS526\LocketAPI\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+D:\HK5\CS526\LocketAPI\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll

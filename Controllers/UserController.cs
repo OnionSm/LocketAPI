@@ -11,18 +11,19 @@ public class UserController : ControllerBase
     private readonly IMongoClient _mongo_client;
     private readonly UserService _userService;
     private readonly UserConversationService _user_conversation_service;
-
     private readonly UserFriendRequestService _user_friend_request_service;
-
+    private readonly UserSessionService _user_session_service;
     public UserController(IMongoClient client,
     UserService userService,
     UserConversationService user_conversation_service,
-    UserFriendRequestService user_friend_request_service)
+    UserFriendRequestService user_friend_request_service,
+    UserSessionService user_session_service)
     {
         _mongo_client = client;
         _userService = userService;
         _user_conversation_service = user_conversation_service;
         _user_friend_request_service = user_friend_request_service;
+        _user_session_service = user_session_service;
     }
 
     // CREATE - POST: /api/user
@@ -36,7 +37,7 @@ public class UserController : ControllerBase
                 session.StartTransaction();
                 
                 // Kiểm tra người dùng đã tồn tại chưa
-                User user_result = await _userService.GetUserByIdAsync(user.Id);
+                User user_result = await _userService.GetUserByIdAsync(user.Id, session);
                 if (user_result != null)
                 {
                     await session.AbortTransactionAsync();
@@ -74,6 +75,22 @@ public class UserController : ControllerBase
                 {
                     await session.AbortTransactionAsync();
                     return BadRequest("Số điện thoại và email đã được sử dụng");
+                }
+
+                // Create User Session History 
+                var check_ss_existence = await _user_session_service.GetUserSessionHistoryByUserIdAsync(user.Id, session);
+                if(check_ss_existence != null)
+                {
+                    await session.AbortTransactionAsync();
+                    return BadRequest("Không thể thêm lịch sử phiên đăng nhập do lịch sử này đã được tạo");
+                }
+                UserSessionHistory ush = new UserSessionHistory();
+                ush.UserId = user.Id;
+                var create_result = await _user_session_service.CreateNewUserSessionHistoryAsync(ush, session);
+                if(!create_result)
+                {
+                    await session.AbortTransactionAsync();
+                    return BadRequest("Không thể thêm lịch sử phiên đăng nhập");
                 }
                 
                 // Tạo UserConversation
@@ -113,6 +130,7 @@ public class UserController : ControllerBase
             }
         }
     }
+
 
 
     [HttpPost("phone/{phone_number}")]
@@ -181,20 +199,58 @@ public class UserController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<User>>> GetAllUsers()
     {
-        var users = await _userService.GetAllUsersAsync();
-        return Ok(users);
+        using(var session = await _mongo_client.StartSessionAsync())
+        {
+            session.StartTransaction();
+            try
+            {
+                var users = await _userService.GetAllUsersAsync(session);
+                await session.CommitTransactionAsync();
+                return Ok(users);
+            }
+            catch(Exception e)
+            {
+                await session.AbortTransactionAsync();
+                return BadRequest($"Có lỗi trong quá trình xử lí, error: {e}");
+            }
+        }
     }
 
     // READ - GET: /api/user/{id}
     [HttpGet("{id}")]
     public async Task<ActionResult<User>> GetUserById(string id)
     {
-        var user = await _userService.GetUserByIdAsync(id);
-        if (user == null)
+        using(var session = await _mongo_client.StartSessionAsync())
         {
-            return NotFound();
+            session.StartTransaction();
+            try
+            {
+                var user = await _userService.GetUserByIdAsync(id, session);
+                if (user == null)
+                {
+                    await session.CommitTransactionAsync();
+                    return NotFound();
+                }
+                await session.CommitTransactionAsync();
+                return Ok(user);
+            }
+            catch(Exception e)
+            {
+                await session.AbortTransactionAsync();
+                return BadRequest($"Có lỗi trong quá trình xử lí, error: {e}");
+            }
         }
-        return Ok(user);
+    }
+
+    [HttpGet("id/{user_id}")]
+    public async Task<ActionResult<User>>  GetUserData(string user_id, string token)
+    {
+        var user_data = await _userService.GetUserDataByTokenAsync(user_id, token);
+        if(user_data == null)
+        {
+            return BadRequest("Không thể lấy thông tin người dùng");
+        }
+        return Ok(user_data);
     }
 
     // UPDATE - PUT: /api/user/{id}

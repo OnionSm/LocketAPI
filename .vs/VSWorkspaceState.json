@@ -1,12 +1,12 @@
 {
   "ExpandedNodes": [
     "",
-    "\\bin",
     "\\Controllers",
     "\\Models",
     "\\Properties",
-    "\\Services"
+    "\\Services",
+    "\\SignalR"
   ],
-  "SelectedNode": "\\appsettings.json",
+  "SelectedNode": "\\LocketAPI.sln",
   "PreviewInSolutionExplorer": false
 }
