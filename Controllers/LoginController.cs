@@ -18,19 +18,20 @@ public class LoginController: ControllerBase
     }
 
     [HttpPost("email")]
-    public async Task<ActionResult<string>> LoginByEmail([FromBody] LoginForm login_form)
+    public async Task<ActionResult<string>> LoginByEmail([FromForm] string Email, [FromForm] string Password)
     {
         using(var session = await _mongo_client.StartSessionAsync())
         {
             session.StartTransaction();
             try
             {
-                var user = await _login_service.AuthenticateByEmailAsync(login_form.Email, login_form.Password);
+                var user = await _login_service.AuthenticateByEmailAsync(Email, Password);
                 if(user == null)
                 {
                     await session.AbortTransactionAsync();
                     return Unauthorized("Không thể xác thực người dùng");
                 }
+                
                 string access_token = _user_service.GenerateJwtToken(user);
                 if(access_token == "")
                 {

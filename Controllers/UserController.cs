@@ -163,9 +163,10 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpPost("email/{email}")]
-    public async Task<ActionResult<bool>> CheckValidEmail(string email)
+    [HttpPost("email")]
+    public async Task<ActionResult<bool>> CheckValidEmail([FromForm] string email)
     {
+        Console.WriteLine("Has been called");
         using (var session = await _mongo_client.StartSessionAsync())
         {
             session.StartTransaction();
@@ -177,10 +178,10 @@ public class UserController : ControllerBase
                     return BadRequest("Email không hợp lệ");
                 }
                 var result = await _userService.GetUserByEmailAsync(email, session);
-                if (result != null)
+                if (result == null)
                 {
                     await session.AbortTransactionAsync();
-                    return Ok(false);  // Email đã tồn tại
+                    return Ok(false);  // Email không tồn tại
                 }
                 await session.CommitTransactionAsync();
                 return Ok(true); 

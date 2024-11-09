@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Cấu hình MongoDBSettings từ appsettings.json
@@ -35,6 +36,7 @@ builder.Services.AddScoped<UserConversationService>();
 builder.Services.AddScoped<UserFriendRequestService>();
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<RefreshTokenService>();
+builder.Services.AddScoped<UserSessionService>();
 
 
 // Cấu hình JWT Authentication
@@ -51,6 +53,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+    policy =>
+    {
+        policy.AllowAnyOrigin()    // Cho phép tất cả các nguồn
+              .AllowAnyHeader()    // Cho phép tất cả các header
+              .AllowAnyMethod();   // Cho phép tất cả các phương thức HTTP (GET, POST, PUT, DELETE, v.v.)
+    });
+});
+
 builder.Services.AddAuthorization();
 
 builder.Services.AddSignalR();
@@ -61,6 +74,7 @@ builder.Services.AddControllers();
 var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors("AllowAll");
 
 // Ánh xạ các Controller
 app.MapControllers();
