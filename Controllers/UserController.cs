@@ -27,9 +27,10 @@ public class UserController : ControllerBase
     }
 
     // CREATE - POST: /api/user
-    [HttpPost]
-    public async Task<ActionResult<User>> CreateUser([FromBody] User user)
+    [HttpPost("create")]
+    public async Task<ActionResult<User>> CreateUser([FromForm] User user)
     {
+        Console.WriteLine("Create User has been called");
         using (var session = await _mongo_client.StartSessionAsync())
         {
             try
@@ -37,11 +38,11 @@ public class UserController : ControllerBase
                 session.StartTransaction();
                 
                 // Kiểm tra người dùng đã tồn tại chưa
-                User user_result = await _userService.GetUserByIdAsync(user.Id, session);
+                User user_result = await _userService.GetUserByIdAsync(user.PublicUserId, session);
                 if (user_result != null)
                 {
                     await session.AbortTransactionAsync();
-                    return BadRequest("Không thể tạo mới user, user đã tồn tại");
+                    return BadRequest("Không thể tạo mới user, user_id đã tồn tại");
                 }
                 
                 // Tạo người dùng mới
@@ -133,6 +134,7 @@ public class UserController : ControllerBase
 
 
 
+
     [HttpPost("phone/{phone_number}")]
     public async Task<ActionResult<bool>> CheckValidPhoneNumber(string phone_number)
     {
@@ -166,7 +168,6 @@ public class UserController : ControllerBase
     [HttpPost("email")]
     public async Task<ActionResult<bool>> CheckValidEmail([FromForm] string email)
     {
-        Console.WriteLine("Has been called");
         using (var session = await _mongo_client.StartSessionAsync())
         {
             session.StartTransaction();

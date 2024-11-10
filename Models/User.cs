@@ -10,6 +10,9 @@ public class User
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
+    [BsonElement("public_user_id")]
+    public string PublicUserId {get; set;} = "";
+
     [BsonElement("first_name")]
     [Required(ErrorMessage = "First name is required")]
     public string FirstName { get; set; } = "";
@@ -19,12 +22,12 @@ public class User
     public string LastName { get; set; } = "";
 
     [BsonElement("age")]
-    [Range(0, 120, ErrorMessage = "Age must be between 0 and 120")]
-    public int Age { get; set; }
+    // [Range(0, 120, ErrorMessage = "Age must be between 0 and 120")]
+    public int? Age { get; set; }
 
     [BsonElement("gender")]
-    [RegularExpression("^(Male|Female|Other)$", ErrorMessage = "Gender must be Male, Female, or Other")]
-    public string Gender { get; set; } = "";
+    // [RegularExpression("^(Male|Female|Other)$", ErrorMessage = "Gender must be Male, Female, or Other")]
+    public string? Gender { get; set; } = "";
 
     [BsonElement("phone_number")]
     [RegularExpression(@"^\d+$", ErrorMessage = "PhoneNumber must contain only numbers")]

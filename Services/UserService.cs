@@ -43,9 +43,9 @@ public class UserService
     }
 
     // READ - Retrieve user by ID
-    public async Task<User> GetUserByIdAsync(string id, IClientSessionHandle session)
+    public async Task<User> GetUserByIdAsync(string public_user_id, IClientSessionHandle session)
     {
-        return await _usersCollection.Find(session, user => user.Id == id).FirstOrDefaultAsync();
+        return await _usersCollection.Find(session, user => user.PublicUserId == public_user_id).FirstOrDefaultAsync();
     }
 
     public async Task<User> GetUserDataByTokenAsync(string user_id, string token)
