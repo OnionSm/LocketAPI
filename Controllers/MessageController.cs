@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Microsoft.AspNetCore.SignalR;
+
 
 
 
@@ -16,17 +18,21 @@ public class MessageController : ControllerBase
 
     private readonly UserService _user_service;
 
+    private readonly IHubContext<ChatHub> _hubContext;
+
     public MessageController(IMongoClient client,
     MessageService service,
     ConversationService conversation_service, 
     UserConversationService user_conservation_service,
-    UserService user_service)
+    UserService user_service,
+    IHubContext<ChatHub> hubContext)
     {
         _mongo_client = client;
         _messageService = service;
         _conversation_service = conversation_service;
         _user_conservation_service = user_conservation_service;
         _user_service = user_service;
+        _hubContext = hubContext;
     }
 
     // CREATE : POST
@@ -79,6 +85,14 @@ public class MessageController : ControllerBase
             }
         }
         
+    }
+
+    [HttpPost("send")]
+    public async Task<IActionResult> SendMessage([FromForm] string user , [FromForm] string message)
+    {
+        // Gửi message tới tất cả client đã kết nối qua sự kiện "SendMessage"
+        await _hubContext.Clients.All.SendAsync("SendMessage", user, message);
+        return Ok("Message sent");
     }
 
     // READ : GET 

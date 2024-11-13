@@ -3,8 +3,12 @@
   "WorkspaceRootPath": "D:\\HK5\\CS526\\LocketAPI\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\HK5\\CS526\\LocketAPI\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{96E98C79-078B-46FC-888A-500BCA607E24}|LocketAPI.csproj|d:\\hk5\\cs526\\locketapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{96E98C79-078B-46FC-888A-500BCA607E24}|LocketAPI.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{96E98C79-078B-46FC-888A-500BCA607E24}|LocketAPI.csproj|d:\\hk5\\cs526\\locketapi\\signalr\\chathub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{96E98C79-078B-46FC-888A-500BCA607E24}|LocketAPI.csproj|solutionrelative:signalr\\chathub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,8 +18,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ChatHub.cs",
+              "DocumentMoniker": "D:\\HK5\\CS526\\LocketAPI\\SignalR\\ChatHub.cs",
+              "RelativeDocumentMoniker": "SignalR\\ChatHub.cs",
+              "ToolTip": "D:\\HK5\\CS526\\LocketAPI\\SignalR\\ChatHub.cs",
+              "RelativeToolTip": "SignalR\\ChatHub.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-13T07:03:02.398Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -24,7 +41,7 @@
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "D:\\HK5\\CS526\\LocketAPI\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AQIAABIAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "ViewState": "AQIAAC8AAAAAAAAAAAAQwEMAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-11-08T02:13:40.424Z",
               "EditorCaption": ""

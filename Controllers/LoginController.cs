@@ -9,6 +9,7 @@ public class LoginController: ControllerBase
     private readonly LoginService _login_service;
     private readonly UserService _user_service;
     private readonly RefreshTokenService _refresh_token_service;
+
     public LoginController(LoginService login_service, UserService user_service, IMongoClient client, RefreshTokenService rft_service)
     {
         _login_service = login_service;
@@ -55,5 +56,35 @@ public class LoginController: ControllerBase
             }
         }
         
+    }
+
+    [HttpPost("valid-email")]
+    public async Task<ActionResult<bool>> CheckValidEmail([FromForm] string email)
+    {
+        using (var session = await _mongo_client.StartSessionAsync())
+        {
+            session.StartTransaction();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(email))
+                {
+                    await session.AbortTransactionAsync();
+                    return BadRequest("Email không hợp lệ");
+                }
+                var result = await _user_service.GetUserByEmailAsync(email, session);
+                if (result == null)
+                {
+                    await session.AbortTransactionAsync();
+                    return Ok(false);  // Email không tồn tại
+                }
+                await session.CommitTransactionAsync();
+                return Ok(true); 
+            }
+            catch(Exception e)
+            {
+                await session.AbortTransactionAsync();
+                return BadRequest($"Đã xảy ra lỗi khi thực hiện giao dịch, error {e}");
+            }
+        }
     }
 }

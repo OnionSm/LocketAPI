@@ -6,6 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Options;
 
 public class UserService
 {
@@ -15,18 +16,17 @@ public class UserService
     private readonly int _jwtLifespan;
     private readonly string _jwtIssuer;
     private readonly string _jwtAudience;
+    private readonly JwtService _jwtService;
+    
 
-    public UserService(IMongoDatabase database, IConfiguration configuration)
+    public UserService(IMongoDatabase database, JwtService jwtService, IOptions<JwtSettings> jwt_setting)
     {
         _usersCollection = database.GetCollection<User>("User");
-        _configuration = configuration;
-
-        // Lấy giá trị từ cấu hình JWT
-        var jwtSettings = _configuration.GetSection("JwtSettings");
-        _jwtSecret = jwtSettings["SecretKey"];
-        _jwtLifespan = int.Parse(jwtSettings["TokenLifespan"]);
-        _jwtIssuer = jwtSettings["Issuer"];
-        _jwtAudience = jwtSettings["Audience"];
+        _jwtService = jwtService;
+        _jwtAudience = jwt_setting.Value.Audience;
+        _jwtIssuer = jwt_setting.Value.Issuer;
+        _jwtLifespan = jwt_setting.Value.Lifespan.HasValue ? jwt_setting.Value.Lifespan.Value : 30;
+        _jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
     }
 
 
@@ -48,52 +48,12 @@ public class UserService
         return await _usersCollection.Find(session, user => user.PublicUserId == public_user_id).FirstOrDefaultAsync();
     }
 
-    public async Task<User> GetUserDataByTokenAsync(string user_id, string token)
+    public async Task<User> GetUserDataByUserIdAsync(string user_id)
     {
         try
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_jwtSecret);  
-
-            // Thiết lập các tham số xác thực token
-            var validationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidIssuer = _jwtIssuer, // Issuer mong đợi
-
-                ValidateAudience = true,
-                ValidAudience = _jwtAudience, // Audience mong đợi
-
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero // Không cho phép thời gian chênh lệch
-            };
-
-            // Xác thực token và lấy ClaimsPrincipal
-            var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
-
-            // Lấy thông tin từ Claims
-            var userIdFromToken = principal.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
-            var userRole = principal.Claims.FirstOrDefault(c => c.Type == "Role")?.Value;
-
-            if (userIdFromToken == null)
-            {
-                throw new UnauthorizedAccessException("Token không chứa thông tin UserId.");
-            }
-
-            // Xử lý phân quyền dựa trên role
-            if (userRole == "Admin")
-            {
-                var user = await _usersCollection.Find(u => u.Id == user_id).FirstOrDefaultAsync();
-                return user;
-            }
-            else
-            {
-                var user = await _usersCollection.Find(u => u.Id == userIdFromToken && u.Id == user_id).FirstOrDefaultAsync();
-                return user;
-            }
+            var user = await _usersCollection.Find(u => u.Id == user_id).FirstOrDefaultAsync();
+            return user;
         }
         catch (Exception ex)
         {
@@ -170,9 +130,6 @@ public class UserService
             Subject = new ClaimsIdentity(new Claim[] 
             {
                 new Claim("UserId", user.Id.ToString()), 
-                new Claim("FirstName", user.FirstName), 
-                new Claim("LastName", user.LastName),
-                new Claim("Role", "User")
             }),
             Expires = DateTime.UtcNow.AddMinutes(_jwtLifespan),
             Issuer = _jwtIssuer,

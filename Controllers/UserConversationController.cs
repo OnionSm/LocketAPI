@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
+[Authorize] 
 [Route("api/userconversation")]
 [ApiController]
 public class UserConversationController : ControllerBase
@@ -36,15 +38,22 @@ public class UserConversationController : ControllerBase
         
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<UserConversation>> GetUserConversationById(string id)
+    [HttpGet]
+    public async Task<ActionResult<UserConversation>> GetUserConversationById()
     {
+        var user_id = User.FindFirst("UserId")?.Value; // "UserId" là tên của claim chứa userId trong JWT
+
+        if (string.IsNullOrEmpty(user_id))
+        {
+            return Unauthorized("Không tìm thấy thông tin người dùng trong token.");
+        }
+
         using (var session = await _mongo_client.StartSessionAsync())
         {
             session.StartTransaction();
             try
             {
-                UserConversation user_conversation = await _user_conversation_service.GetUserConversationByIdAsync(id, session);
+                UserConversation user_conversation = await _user_conversation_service.GetUserConversationByIdAsync(user_id, session);
                 if(user_conversation == null)
                 {
                     await session.AbortTransactionAsync();
@@ -61,31 +70,31 @@ public class UserConversationController : ControllerBase
         }
     }
 
-    [HttpGet]
-    public async Task<ActionResult<List<UserConversation>>> GetAllUserConversation()
-    {
-        using (var session = await _mongo_client.StartSessionAsync())
-        {
-            session.StartTransaction();
-            try
-            {
-                List<UserConversation> list_user_conversation = await _user_conversation_service.GetAllUserConversationAsync(session);
-                if(list_user_conversation == null)
-                {
-                    await session.AbortTransactionAsync();
-                    return NotFound();
-                }
-                await session.CommitTransactionAsync();
-                return Ok(list_user_conversation);
-            }
-            catch(Exception e)
-            {
-                await session.AbortTransactionAsync();
-                return BadRequest($"Đã xảy ra lỗi khi thực hiện giao dịch, error {e}");
-            }
-        }
+    // [HttpGet]
+    // public async Task<ActionResult<List<UserConversation>>> GetAllUserConversation()
+    // {
+    //     using (var session = await _mongo_client.StartSessionAsync())
+    //     {
+    //         session.StartTransaction();
+    //         try
+    //         {
+    //             List<UserConversation> list_user_conversation = await _user_conversation_service.GetAllUserConversationAsync(session);
+    //             if(list_user_conversation == null)
+    //             {
+    //                 await session.AbortTransactionAsync();
+    //                 return NotFound();
+    //             }
+    //             await session.CommitTransactionAsync();
+    //             return Ok(list_user_conversation);
+    //         }
+    //         catch(Exception e)
+    //         {
+    //             await session.AbortTransactionAsync();
+    //             return BadRequest($"Đã xảy ra lỗi khi thực hiện giao dịch, error {e}");
+    //         }
+    //     }
         
-    }
+    // }
 
     
 

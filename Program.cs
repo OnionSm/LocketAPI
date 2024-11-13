@@ -6,7 +6,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Cấu hình MongoDBSettings từ appsettings.json
@@ -20,6 +19,10 @@ builder.Services.AddSingleton<IMongoClient>(s =>
     return new MongoClient(settings.ConnectionURI);
 });
 
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+
+
+
 // Đăng ký IMongoDatabase
 builder.Services.AddScoped(s =>
 {
@@ -28,7 +31,9 @@ builder.Services.AddScoped(s =>
     return client.GetDatabase(settings.DatabaseName);
 });
 
-// Đăng ký UserService
+
+
+// Đăng ký Service
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ConversationService>();
 builder.Services.AddScoped<MessageService>();
@@ -37,21 +42,45 @@ builder.Services.AddScoped<UserFriendRequestService>();
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<RefreshTokenService>();
 builder.Services.AddScoped<UserSessionService>();
+builder.Services.AddScoped<JwtService>();
 
+
+DotNetEnv.Env.Load(); // Đọc tệp .env
 
 // Cấu hình JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.RequireHttpsMetadata = false;  // Nếu đang phát triển, có thể bỏ qua HTTPS
+        // Cấu hình yêu cầu metadata HTTPS (bỏ qua nếu phát triển)
+        options.RequireHttpsMetadata = false; 
+
+        // Lấy giá trị Issuer, Audience và SecretKey từ cấu hình
+        var issuer = builder.Configuration["JwtSettings:Issuer"];
+        var audience = builder.Configuration["JwtSettings:Audience"];
+        var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? builder.Configuration["JwtSettings:SecretKey"];
+        var tokenLifespan = builder.Configuration.GetValue<int>("JwtSettings:TokenLifespan");
+
+        // Kiểm tra nếu secretKey không có giá trị
+        if (string.IsNullOrEmpty(secretKey))
+        {
+            throw new InvalidOperationException("JWT secret key is missing.");
+        }
+
+        // Cấu hình các tham số xác thực token
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true,  // Kiểm tra Issuer
-            ValidateLifetime = true,  // Kiểm tra tuổi thọ của token
-            ValidIssuer = builder.Configuration["JwtSettings:Issuer"],  // Lấy Issuer từ cấu hình
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]))  // Lấy Key từ cấu hình
+            ValidateIssuer = true, // Kiểm tra Issuer trong token
+            ValidateLifetime = true, // Kiểm tra thời gian sống của token (exp)
+            ValidIssuer = issuer, // Thiết lập Issuer hợp lệ
+            ValidAudience = audience, // Thiết lập Audience hợp lệ
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)), // Thiết lập key để ký và xác thực token
+            ClockSkew = TimeSpan.Zero // Tùy chọn, có thể điều chỉnh nếu muốn kiểm soát độ lệch thời gian giữa các máy chủ
         };
+
+        // Cấu hình thời gian sống của token
+        options.SaveToken = true; // Lưu token vào HttpContext
     });
+
 
 builder.Services.AddCors(options =>
 {
@@ -65,9 +94,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddAuthorization();
-
 builder.Services.AddSignalR();
-// Đăng ký Controller
 builder.Services.AddControllers();
 
 
@@ -78,8 +105,9 @@ app.UseCors("AllowAll");
 
 // Ánh xạ các Controller
 app.MapControllers();
+
+// Ánh xạ các Hub
 app.MapHub<ChatHub>("/chathub"); 
 
-app.MapGet("/", () => "Hello Onion");
 
 app.Run();

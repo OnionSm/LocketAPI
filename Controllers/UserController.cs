@@ -3,7 +3,9 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
+[Authorize] 
 [Route("api/user")]
 [ApiController]
 public class UserController : ControllerBase
@@ -198,7 +200,7 @@ public class UserController : ControllerBase
 
 
     // READ - GET: /api/user
-    [HttpGet]
+    [HttpGet("all")]
     public async Task<ActionResult<List<User>>> GetAllUsers()
     {
         using(var session = await _mongo_client.StartSessionAsync())
@@ -244,15 +246,29 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpGet("id/{user_id}")]
-    public async Task<ActionResult<User>>  GetUserData(string user_id, string token)
+    [HttpGet]
+    public async Task<ActionResult<User>>  GetUserData()
     {
-        var user_data = await _userService.GetUserDataByTokenAsync(user_id, token);
-        if(user_data == null)
+        try
         {
-            return BadRequest("Không thể lấy thông tin người dùng");
+            var user_id = User.FindFirst("UserId")?.Value; 
+
+                if (string.IsNullOrEmpty(user_id))
+                {
+                    return Unauthorized("Không tìm thấy thông tin người dùng trong token.");
+                }
+
+            var user_data = await _userService.GetUserDataByUserIdAsync(user_id);
+            if(user_data == null)
+            {
+                return BadRequest("Không thể lấy thông tin người dùng");
+            }
+            return Ok(user_data);
         }
-        return Ok(user_data);
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Đã xảy ra lỗi: {ex.Message}");
+        }
     }
 
     // UPDATE - PUT: /api/user/{id}
