@@ -4,8 +4,6 @@ using MongoDB.Driver;
 using Microsoft.AspNetCore.SignalR;
 
 
-
-
 [Route("api/message")]
 [ApiController]
 public class MessageController : ControllerBase

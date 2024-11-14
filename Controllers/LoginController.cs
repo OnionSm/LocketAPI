@@ -33,7 +33,7 @@ public class LoginController: ControllerBase
                     return Unauthorized("Không thể xác thực người dùng");
                 }
                 
-                string access_token = _user_service.GenerateJwtToken(user);
+                string access_token = _user_service.GenerateJwtToken(user.Id);
                 if(access_token == "")
                 {
                     await session.AbortTransactionAsync();

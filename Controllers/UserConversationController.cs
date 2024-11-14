@@ -41,19 +41,19 @@ public class UserConversationController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<UserConversation>> GetUserConversationById()
     {
-        var user_id = User.FindFirst("UserId")?.Value; // "UserId" là tên của claim chứa userId trong JWT
-
-        if (string.IsNullOrEmpty(user_id))
-        {
-            return Unauthorized("Không tìm thấy thông tin người dùng trong token.");
-        }
-
         using (var session = await _mongo_client.StartSessionAsync())
         {
             session.StartTransaction();
             try
             {
+                var user_id = User.FindFirst("UserId")?.Value;
+                Console.WriteLine(user_id);
+                if (string.IsNullOrEmpty(user_id))
+                {
+                    return Unauthorized("Không tìm thấy thông tin người dùng trong token.");
+                }
                 UserConversation user_conversation = await _user_conversation_service.GetUserConversationByIdAsync(user_id, session);
+                Console.WriteLine(user_conversation);
                 if(user_conversation == null)
                 {
                     await session.AbortTransactionAsync();

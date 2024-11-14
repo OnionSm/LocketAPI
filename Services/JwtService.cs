@@ -10,8 +10,6 @@ public class JwtService
     private readonly string _jwtIssuer;
     private readonly string _jwtAudience;
 
-    private readonly JwtSettings _jwt_settings;
-
     public JwtService(IOptions<JwtSettings> jwt_setting)
     {
         _jwtAudience = jwt_setting.Value.Audience;

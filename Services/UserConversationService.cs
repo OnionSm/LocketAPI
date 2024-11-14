@@ -31,7 +31,7 @@ public class UserConversationService
 
     public async Task<UserConversation> GetUserConversationByIdAsync(string id, IClientSessionHandle session)
     {
-        return await _user_conversation_collection.Find(session, userconversation => userconversation.Id == id).FirstOrDefaultAsync();
+        return await _user_conversation_collection.Find(session, userconversation => userconversation.UserId == id).FirstOrDefaultAsync();
     }
 
     public async Task<UserConversation> GetUserConversationByUserId(string user_id, IClientSessionHandle session)

@@ -114,7 +114,7 @@ public class UserService
         return await _usersCollection.Find(session, user => user.Email == email).FirstOrDefaultAsync();
     }
 
-    public string GenerateJwtToken(User user)
+    public string GenerateJwtToken(string user_id)
     {
         if (_jwtLifespan <= 0 || _jwtSecret == null)
         {
@@ -129,9 +129,9 @@ public class UserService
         {
             Subject = new ClaimsIdentity(new Claim[] 
             {
-                new Claim("UserId", user.Id.ToString()), 
+                new Claim("UserId", user_id.ToString()), 
             }),
-            Expires = DateTime.UtcNow.AddMinutes(_jwtLifespan),
+            Expires = DateTime.UtcNow.AddSeconds(_jwtLifespan),
             Issuer = _jwtIssuer,
             Audience = _jwtAudience,
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
