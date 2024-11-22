@@ -3,14 +3,14 @@ using System.Threading.Tasks;
 
 public class ChatHub: Hub
 {
-    public async Task SendMessage(string user, string message)
+    public async Task SendMessage(Message message)
     {
         // Kiểm tra điều kiện (ví dụ: chỉ gửi thông điệp nếu message không trống)
-        if (!string.IsNullOrEmpty(message))
+        if (message != null)
         {
-            Console.WriteLine("Message from {0}: {1}", user, message);
+            Console.WriteLine("Message from {0}: {1}", message);
             // Gửi thông điệp đến tất cả client
-            await Clients.All.SendAsync("ReceiveMessage", user, message);
+            await Clients.All.SendAsync("ReceiveMessage", message);
         }
         else
         {

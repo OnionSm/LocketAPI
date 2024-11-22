@@ -2,8 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.Authorization;
 
-
+[Authorize]
 [Route("api/message")]
 [ApiController]
 public class MessageController : ControllerBase
@@ -35,14 +36,21 @@ public class MessageController : ControllerBase
 
     // CREATE : POST
     [HttpPost]
-    public async Task<IActionResult> CreateMessage([FromBody] Message message)
+    public async Task<IActionResult> CreateMessage([FromForm] Message message)
     {
+        Console.WriteLine(message.ToJson());
         using (var session = await _mongo_client.StartSessionAsync())
         {
             session.StartTransaction();
             try
             {
-               
+                var user_id = User.FindFirst("UserId")?.Value;
+                if(user_id == null)
+                {
+                    await session.AbortTransactionAsync();
+                    return BadRequest("Không thể tạo tin nhắn");
+                }
+                message.SenderId = user_id;
 
                 await _messageService.CreatMessageAsync(message, session);
         
@@ -68,6 +76,7 @@ public class MessageController : ControllerBase
                         await _user_conservation_service.AddNewMessageAsync(participant, message, session);
                     }
                     await session.CommitTransactionAsync();
+                    await _hubContext.Clients.All.SendAsync("SendMessage", result);
                     return CreatedAtAction(nameof(GetMessageById), new { id = message.Id }, message);
                 }
                 else

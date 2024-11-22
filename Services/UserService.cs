@@ -1,12 +1,12 @@
-using Microsoft.AspNetCore.Components;
-using MongoDB.Driver;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Options;
+    using Microsoft.AspNetCore.Components;
+    using MongoDB.Driver;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using System.IdentityModel.Tokens.Jwt;
+    using System.Security.Claims;
+    using System.Text;
+    using Microsoft.IdentityModel.Tokens;
+    using Microsoft.Extensions.Options;
 
 public class UserService
 {
@@ -52,6 +52,7 @@ public class UserService
     {
         try
         {
+            Console.WriteLine("user_id :", user_id);
             var user = await _usersCollection.Find(u => u.Id == user_id).FirstOrDefaultAsync();
             return user;
         }
@@ -131,7 +132,7 @@ public class UserService
             {
                 new Claim("UserId", user_id.ToString()), 
             }),
-            Expires = DateTime.UtcNow.AddSeconds(_jwtLifespan),
+            Expires = DateTime.UtcNow.AddMinutes(_jwtLifespan),
             Issuer = _jwtIssuer,
             Audience = _jwtAudience,
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
