@@ -10,10 +10,10 @@ public class JwtService
     private readonly string _jwtIssuer;
     private readonly string _jwtAudience;
 
-    public JwtService(IOptions<JwtSettings> jwt_setting)
+    public JwtService()
     {
-        _jwtAudience = jwt_setting.Value.Audience;
-        _jwtIssuer = jwt_setting.Value.Issuer;
+        _jwtIssuer = Environment.GetEnvironmentVariable("Issuer");
+        _jwtAudience = Environment.GetEnvironmentVariable("Audience");
         _jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
     }
 

@@ -19,8 +19,9 @@ public class LoginController: ControllerBase
     }
 
     [HttpPost("email")]
-    public async Task<ActionResult<string>> LoginByEmail([FromForm] string Email, [FromForm] string Password)
+    public async Task<IActionResult> LoginByEmail([FromForm] string Email, [FromForm] string Password)
     {
+        Console.WriteLine("Email has been checked");
         using(var session = await _mongo_client.StartSessionAsync())
         {
             session.StartTransaction();
@@ -44,9 +45,12 @@ public class LoginController: ControllerBase
                 TokenResponse token = new TokenResponse();
                 token.AccessToken = access_token;
                 token.RefreshToken = refreshToken;
-
+                var respone = new {
+                    user,
+                    token
+                };
                 await session.CommitTransactionAsync();
-                return Ok(token);
+                return Ok(respone);
                 
             }
             catch(Exception e)

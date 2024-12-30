@@ -41,7 +41,7 @@ public class UserController : ControllerBase
                 
                 // Kiểm tra người dùng đã tồn tại chưa
                 User user_result = await _userService.GetUserByIdAsync(user.PublicUserId, session);
-                if (user_result != null)
+                if (user_result != null || user.AccountDeleted == true)
                 {
                     await session.AbortTransactionAsync();
                     return BadRequest("Không thể tạo mới user, user_id đã tồn tại");
@@ -348,5 +348,36 @@ public class UserController : ControllerBase
             }
         }
         
+    }
+
+    [HttpPut("change_user_name")]
+    public async Task<IActionResult> ChangUsername([FromForm] string first_name, [FromForm] string last_name)
+    {
+        using(var session = await _mongo_client.StartSessionAsync())
+        {
+            session.StartTransaction();
+            try
+            {
+                var user_id = User.FindFirst("UserId")?.Value;
+                if (user_id == null)
+                {
+                    await session.AbortTransactionAsync();
+                    return BadRequest();
+                }
+                var res = await _userService.ChangeUsernameAsync(user_id, first_name, last_name, session);
+                if (!res)
+                {
+                    await session.AbortTransactionAsync();
+                    return BadRequest();
+                }
+                await session.CommitTransactionAsync();
+                return Ok();
+            }
+            catch(Exception)
+            {
+                await session.AbortTransactionAsync();
+                return StatusCode(502 , "Bad Gateway");
+            }
+        }
     }
 }

@@ -47,4 +47,7 @@ public class User
 
     [BsonElement("friends")]
     public List<string> Friends { get; set; } = new List<string>();
+
+    [BsonElement("account_deleted")]
+    public bool AccountDeleted {get; set;} = true;
 }

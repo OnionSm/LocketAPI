@@ -1,0 +1,124 @@
+services:
+  locket-app:
+    ports:
+      - 5115:8080
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - mongodb_primary
+      - mongodb_secondary_1
+      - mongodb_secondary_2
+      - mongo-setup
+    networks:
+      - app_network
+
+  mongodb_primary:
+    image: mongo:8.0.3
+    container_name: ${PRIMARY_MONGO_NAME}
+    ports:
+      - 27020:27017
+    volumes:
+      - mongodb_primary:/data/db  
+      - ./mongodb:/data/configdb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    entrypoint:
+      - bash
+      - -c
+      - |
+          chmod 400 /data/configdb/keyfile.key
+          chown 999:999 /data/configdb/keyfile.key
+          exec docker-entrypoint.sh "$$@"
+    command: "mongod --bind_ip_all --replSet rs0 --keyFile /data/configdb/keyfile.key"
+    depends_on:
+      - mongodb_secondary_1
+      - mongodb_secondary_2
+    networks:
+      - app_network
+    restart: always
+
+  mongodb_secondary_1:
+    image: mongo:8.0.3
+    container_name: mongodb_secondary_1
+    expose:
+      - 27017
+    volumes:
+      - mongodb_secondary_1:/data/db  
+      - ./mongodb:/data/configdb
+    entrypoint:
+      - bash
+      - -c
+      - |
+          chmod 400 /data/configdb/keyfile.key
+          chown 999:999 /data/configdb/keyfile.key
+          exec docker-entrypoint.sh "$$@"
+    command: "mongod --bind_ip_all --replSet rs0 --keyFile /data/configdb/keyfile.key"
+    networks:
+      - app_network
+    restart: always
+
+  mongodb_secondary_2:
+    image: mongo:8.0.3
+    container_name: mongodb_secondary_2
+    expose:
+      - 27017
+    volumes:
+      - mongodb_secondary_2:/data/db  
+      - ./mongodb:/data/configdb 
+    entrypoint:
+      - bash
+      - -c
+      - |
+          chmod 400 /data/configdb/keyfile.key
+          chown 999:999 /data/configdb/keyfile.key
+          exec docker-entrypoint.sh "$$@"
+    command: "mongod --bind_ip_all --replSet rs0 --keyFile /data/configdb/keyfile.key"
+    networks:
+      - app_network
+    restart: always
+
+  mongo-setup:
+    image: mongo:8.0.3
+    container_name: mongo-setup
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    depends_on:
+      - mongodb_primary
+      - mongodb_secondary_1
+      - mongodb_secondary_2
+    volumes:
+      - ./mongodb/mongodb_rs_init.sh:/scripts/mongodb_rs_init.sh
+    entrypoint: ["/bin/bash", "/scripts/mongodb_rs_init.sh"]
+    networks:
+      - app_network
+    restart: on-failure
+
+  mongo-express:
+    container_name: mongo-express
+    image: mongo-express
+    restart: always
+    ports:
+      - "8088:8088"
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_USERNAME}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_PASSWORD}
+      ME_CONFIG_MONGODB_URL: "mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongodb_primary:27017/?replicaSet=rs0"
+    depends_on:
+      - "mongodb_primary"
+    networks:
+      - app_network
+
+volumes:
+  mongodb_primary:
+  mongodb_secondary_1:
+  mongodb_secondary_2:
+
+
+networks:
+  app_network:
+    driver: bridge

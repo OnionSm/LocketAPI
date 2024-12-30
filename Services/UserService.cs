@@ -19,13 +19,13 @@ public class UserService
     private readonly JwtService _jwtService;
     
 
-    public UserService(IMongoDatabase database, JwtService jwtService, IOptions<JwtSettings> jwt_setting)
+    public UserService(IMongoDatabase database, JwtService jwtService)
     {
         _usersCollection = database.GetCollection<User>("User");
         _jwtService = jwtService;
-        _jwtAudience = jwt_setting.Value.Audience;
-        _jwtIssuer = jwt_setting.Value.Issuer;
-        _jwtLifespan = jwt_setting.Value.Lifespan.HasValue ? jwt_setting.Value.Lifespan.Value : 30;
+        _jwtIssuer = Environment.GetEnvironmentVariable("Issuer");
+        _jwtAudience = Environment.GetEnvironmentVariable("Audience");
+        _jwtLifespan = int.TryParse(Environment.GetEnvironmentVariable("TokenLifespan"), out var result) ? result : 30;
         _jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
     }
 
@@ -140,5 +140,16 @@ public class UserService
 
         var accessToken = tokenHandler.CreateToken(accessTokenDescriptor);
         return tokenHandler.WriteToken(accessToken);
+    }
+    public async Task<bool> ChangeUsernameAsync(string user_id, string first_name, string last_name, IClientSessionHandle session)
+    {
+        var user = await _usersCollection.Find(u => u.Id == user_id).FirstOrDefaultAsync();
+        if (user == null)
+        {
+            return false;
+        }   
+        var update_user = Builders<User>.Update.Set(u => u.FirstName, first_name).Set(u => u.LastName, last_name);
+        var update_result = await _usersCollection.UpdateOneAsync(u => u.Id == user_id, update_user);
+        return update_result.IsAcknowledged && update_result.ModifiedCount > 0;
     }
 }

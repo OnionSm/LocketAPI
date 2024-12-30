@@ -8,29 +8,21 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Cấu hình MongoDBSettings từ appsettings.json
-builder.Services.Configure<MongoDBSettings>(
-    builder.Configuration.GetSection("MongoDBSettings"));
-
 // Đăng ký MongoClient với ConnectionString từ MongoDBSettings
 builder.Services.AddSingleton<IMongoClient>(s =>
 {
-    var settings = s.GetRequiredService<IOptions<MongoDBSettings>>().Value;
-    return new MongoClient(settings.ConnectionURI);
+    var connection_url = Environment.GetEnvironmentVariable("MongoDBConnectionURI");
+    return new MongoClient(connection_url);
 });
-
-builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
-
 
 
 // Đăng ký IMongoDatabase
 builder.Services.AddScoped(s =>
 {
     var client = s.GetRequiredService<IMongoClient>();
-    var settings = s.GetRequiredService<IOptions<MongoDBSettings>>().Value;
-    return client.GetDatabase(settings.DatabaseName);
+    var database_name = Environment.GetEnvironmentVariable("DatabaseName");
+    return client.GetDatabase(database_name);
 });
-
 
 
 // Đăng ký Service
@@ -55,10 +47,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.RequireHttpsMetadata = false; 
 
         // Lấy giá trị Issuer, Audience và SecretKey từ cấu hình
-        var issuer = builder.Configuration["JwtSettings:Issuer"];
-        var audience = builder.Configuration["JwtSettings:Audience"];
-        var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? builder.Configuration["JwtSettings:SecretKey"];
-        var tokenLifespan = builder.Configuration.GetValue<int>("JwtSettings:TokenLifespan");
+        var issuer = Environment.GetEnvironmentVariable("Issuer");
+        var audience = Environment.GetEnvironmentVariable("Audience");
+        var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
+        var tokenLifespanString = Environment.GetEnvironmentVariable("TokenLifespan");
+        int tokenLifespan = int.TryParse(tokenLifespanString, out var result) ? result : 0; 
 
         // Kiểm tra nếu secretKey không có giá trị
         if (string.IsNullOrEmpty(secretKey))
@@ -69,16 +62,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         // Cấu hình các tham số xác thực token
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true, // Kiểm tra Issuer trong token
-            ValidateLifetime = true, // Kiểm tra thời gian sống của token (exp)
-            ValidIssuer = issuer, // Thiết lập Issuer hợp lệ
-            ValidAudience = audience, // Thiết lập Audience hợp lệ
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)), // Thiết lập key để ký và xác thực token
-            ClockSkew = TimeSpan.Zero // Tùy chọn, có thể điều chỉnh nếu muốn kiểm soát độ lệch thời gian giữa các máy chủ
+            ValidateIssuer = true, 
+            ValidateLifetime = true, 
+            ValidIssuer = issuer, 
+            ValidAudience = audience, 
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)), 
+            ClockSkew = TimeSpan.Zero
         };
 
-        // Cấu hình thời gian sống của token
-        options.SaveToken = true; // Lưu token vào HttpContext
+        
+        options.SaveToken = true; 
     });
 
 
@@ -87,9 +80,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll",
     policy =>
     {
-        policy.AllowAnyOrigin()    // Cho phép tất cả các nguồn
-              .AllowAnyHeader()    // Cho phép tất cả các header
-              .AllowAnyMethod();   // Cho phép tất cả các phương thức HTTP (GET, POST, PUT, DELETE, v.v.)
+        policy.AllowAnyOrigin()   
+              .AllowAnyHeader()  
+              .AllowAnyMethod(); 
     });
 });
 
@@ -109,5 +102,5 @@ app.MapControllers();
 // Ánh xạ các Hub
 app.MapHub<ChatHub>("/chathub"); 
 
-
+app.MapGet("/", () => "Hello, World!");
 app.Run();

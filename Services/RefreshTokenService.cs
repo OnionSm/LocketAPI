@@ -15,14 +15,14 @@ public class RefreshTokenService
     private readonly int _jwtLifespan;
     private readonly string _jwtIssuer;
     private readonly string _jwtAudience;
-    public RefreshTokenService(IMongoDatabase database, IMongoClient client, IConfiguration configuration, IOptions<JwtSettings> jwt_setting)
+    public RefreshTokenService(IMongoDatabase database, IMongoClient client, IConfiguration configuration)
     {
         _user_refresh_token_collection = database.GetCollection<UserRefreshTokens>("UserRefreshTokens");
         _mongo_client = client;
         _configuration = configuration;
-        _jwtAudience = jwt_setting.Value.Audience;
-        _jwtIssuer = jwt_setting.Value.Issuer;
-        _jwtLifespan = jwt_setting.Value.Lifespan.HasValue ? jwt_setting.Value.Lifespan.Value : 30;
+       _jwtIssuer = Environment.GetEnvironmentVariable("Issuer");
+        _jwtAudience = Environment.GetEnvironmentVariable("Audience");
+        _jwtLifespan = int.TryParse(Environment.GetEnvironmentVariable("TokenLifespan"), out var result) ? result : 30;
         _jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
     }
 
