@@ -6,7 +6,7 @@ public class ConversationRespone
     [BsonId] // Đặt làm ID trong MongoDB
     public string Id { get; set; } = string.Empty;
     public string GroupName { get; set; } = string.Empty;
-    public string GroupAvatarUrl { get; set; } = string.Empty;
+    public byte[] GroupAvatarUrl { get; set; } = [];
     [BsonElement("participants")]
     public List<string> Participants { get; set; } = new List<string>();
 
