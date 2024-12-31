@@ -14,8 +14,6 @@ public class LoginService
         var user = await _user_collection.Find(u => u.Email == email && u.Password == password).FirstOrDefaultAsync();
         return user;
     }
-
-    
 }
 
 
