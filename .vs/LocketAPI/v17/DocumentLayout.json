@@ -3,8 +3,8 @@
   "WorkspaceRootPath": "D:\\HK5\\CS526\\LocketAPI\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{96E98C79-078B-46FC-888A-500BCA607E24}|LocketAPI.csproj|d:\\hk5\\cs526\\locketapi\\controllers\\messagecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{96E98C79-078B-46FC-888A-500BCA607E24}|LocketAPI.csproj|solutionrelative:controllers\\messagecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{96E98C79-078B-46FC-888A-500BCA607E24}|LocketAPI.csproj|d:\\hk5\\cs526\\locketapi\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{96E98C79-078B-46FC-888A-500BCA607E24}|LocketAPI.csproj|solutionrelative:.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{96E98C79-078B-46FC-888A-500BCA607E24}|LocketAPI.csproj|d:\\hk5\\cs526\\locketapi\\services\\userconversationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -25,6 +25,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{96E98C79-078B-46FC-888A-500BCA607E24}|LocketAPI.csproj|d:\\hk5\\cs526\\locketapi\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{96E98C79-078B-46FC-888A-500BCA607E24}|LocketAPI.csproj|solutionrelative:controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{96E98C79-078B-46FC-888A-500BCA607E24}|LocketAPI.csproj|d:\\hk5\\cs526\\locketapi\\controllers\\messagecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{96E98C79-078B-46FC-888A-500BCA607E24}|LocketAPI.csproj|solutionrelative:controllers\\messagecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{96E98C79-078B-46FC-888A-500BCA607E24}|LocketAPI.csproj|d:\\hk5\\cs526\\locketapi\\models\\message.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -86,8 +90,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": ".gitignore",
+              "DocumentMoniker": "D:\\HK5\\CS526\\LocketAPI\\.gitignore",
+              "RelativeDocumentMoniker": ".gitignore",
+              "ToolTip": "D:\\HK5\\CS526\\LocketAPI\\.gitignore",
+              "RelativeToolTip": ".gitignore",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2024-12-31T10:27:30.662Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
@@ -98,8 +115,7 @@
               "RelativeToolTip": "Services\\UserConversationService.cs",
               "ViewState": "AQIAABIAAAAAAAAAAAAgwB0AAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-14T12:27:14.957Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-14T12:27:14.957Z"
             },
             {
               "$type": "Document",
@@ -111,8 +127,7 @@
               "RelativeToolTip": "Controllers\\UserConversationController.cs",
               "ViewState": "AQIAACQAAAAAAAAAAAAYwDIAAAANAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-14T12:26:26.487Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-14T12:26:26.487Z"
             },
             {
               "$type": "Document",
@@ -124,8 +139,7 @@
               "RelativeToolTip": "Services\\UserService.cs",
               "ViewState": "AQIAAG4AAAAAAAAAAAAIwIQAAAA5AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-14T12:20:47.054Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-14T12:20:47.054Z"
             },
             {
               "$type": "Document",
@@ -137,8 +151,7 @@
               "RelativeToolTip": "Controllers\\LoginController.cs",
               "ViewState": "AQIAABsAAAAAAAAAAAAYwDEAAAAQAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-14T12:20:11.8Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-14T12:20:11.8Z"
             },
             {
               "$type": "Document",
@@ -150,25 +163,23 @@
               "RelativeToolTip": "Controllers\\UserController.cs",
               "ViewState": "AQIAAPkAAAAAAAAAAAA5wAQBAABRAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-14T02:26:35.799Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-14T02:26:35.799Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 6,
               "Title": "MessageController.cs",
               "DocumentMoniker": "D:\\HK5\\CS526\\LocketAPI\\Controllers\\MessageController.cs",
               "RelativeDocumentMoniker": "Controllers\\MessageController.cs",
               "ToolTip": "D:\\HK5\\CS526\\LocketAPI\\Controllers\\MessageController.cs",
               "RelativeToolTip": "Controllers\\MessageController.cs",
-              "ViewState": "AQIAAGEAAAAAAAAAAAAQwFgAAAANAAAA",
+              "ViewState": "AQIAAHAAAAAAAAAAAAAQwFgAAAANAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-18T10:57:22.574Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-18T10:57:22.574Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "Message.cs",
               "DocumentMoniker": "D:\\HK5\\CS526\\LocketAPI\\Models\\Message.cs",
               "RelativeDocumentMoniker": "Models\\Message.cs",
@@ -176,12 +187,11 @@
               "RelativeToolTip": "Models\\Message.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAAsAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-22T08:57:49.533Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-22T08:57:49.533Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "ConversationRespone.cs",
               "DocumentMoniker": "D:\\HK5\\CS526\\LocketAPI\\Models\\ConversationRespone.cs",
               "RelativeDocumentMoniker": "Models\\ConversationRespone.cs",
@@ -189,12 +199,11 @@
               "RelativeToolTip": "Models\\ConversationRespone.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAA+AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-22T12:53:01.249Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-22T12:53:01.249Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "ChatHub.cs",
               "DocumentMoniker": "D:\\HK5\\CS526\\LocketAPI\\SignalR\\ChatHub.cs",
               "RelativeDocumentMoniker": "SignalR\\ChatHub.cs",
@@ -202,12 +211,11 @@
               "RelativeToolTip": "SignalR\\ChatHub.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAyAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-13T07:03:02.398Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-13T07:03:02.398Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "Conversation.cs",
               "DocumentMoniker": "D:\\HK5\\CS526\\LocketAPI\\Models\\Conversation.cs",
               "RelativeDocumentMoniker": "Models\\Conversation.cs",
@@ -215,12 +223,11 @@
               "RelativeToolTip": "Models\\Conversation.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABoAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-22T08:05:50.035Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-22T08:05:50.035Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "ConversationController.cs",
               "DocumentMoniker": "D:\\HK5\\CS526\\LocketAPI\\Controllers\\ConversationController.cs",
               "RelativeDocumentMoniker": "Controllers\\ConversationController.cs",
@@ -228,12 +235,11 @@
               "RelativeToolTip": "Controllers\\ConversationController.cs",
               "ViewState": "AQIAAAgAAAAAAAAAAAAAwBIAAABFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-22T08:09:00.865Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-22T08:09:00.865Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "UserConversation.cs",
               "DocumentMoniker": "D:\\HK5\\CS526\\LocketAPI\\Models\\UserConversation.cs",
               "RelativeDocumentMoniker": "Models\\UserConversation.cs",
@@ -241,12 +247,11 @@
               "RelativeToolTip": "Models\\UserConversation.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAABJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-22T08:51:02.725Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-22T08:51:02.725Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "User.cs",
               "DocumentMoniker": "D:\\HK5\\CS526\\LocketAPI\\Models\\User.cs",
               "RelativeDocumentMoniker": "Models\\User.cs",
@@ -254,12 +259,11 @@
               "RelativeToolTip": "Models\\User.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAjAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-14T02:36:55.648Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-14T02:36:55.648Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "TokenRespone.cs",
               "DocumentMoniker": "D:\\HK5\\CS526\\LocketAPI\\Models\\TokenRespone.cs",
               "RelativeDocumentMoniker": "Models\\TokenRespone.cs",
@@ -267,12 +271,11 @@
               "RelativeToolTip": "Models\\TokenRespone.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAuwAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-14T02:36:54.28Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-14T02:36:54.28Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 15,
               "Title": "MessageService.cs",
               "DocumentMoniker": "D:\\HK5\\CS526\\LocketAPI\\Services\\MessageService.cs",
               "RelativeDocumentMoniker": "Services\\MessageService.cs",
@@ -280,12 +283,11 @@
               "RelativeToolTip": "Services\\MessageService.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-14T02:36:24.99Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-14T02:36:24.99Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "LoginService.cs",
               "DocumentMoniker": "D:\\HK5\\CS526\\LocketAPI\\Services\\LoginService.cs",
               "RelativeDocumentMoniker": "Services\\LoginService.cs",
@@ -293,12 +295,11 @@
               "RelativeToolTip": "Services\\LoginService.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-14T02:36:23.427Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-14T02:36:23.427Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "RefreshTokenService.cs",
               "DocumentMoniker": "D:\\HK5\\CS526\\LocketAPI\\Services\\RefreshTokenService.cs",
               "RelativeDocumentMoniker": "Services\\RefreshTokenService.cs",
@@ -306,12 +307,11 @@
               "RelativeToolTip": "Services\\RefreshTokenService.cs",
               "ViewState": "AQIAADYAAAAAAAAAAIBJwEMAAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-14T02:24:09.146Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-14T02:24:09.146Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 18,
               "Title": "RefreshTokenController.cs",
               "DocumentMoniker": "D:\\HK5\\CS526\\LocketAPI\\Controllers\\RefreshTokenController.cs",
               "RelativeDocumentMoniker": "Controllers\\RefreshTokenController.cs",
@@ -319,12 +319,11 @@
               "RelativeToolTip": "Controllers\\RefreshTokenController.cs",
               "ViewState": "AQIAAAYAAAAAAAAAAIBJwCcAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-14T02:24:01.108Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-14T02:24:01.108Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 19,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\HK5\\CS526\\LocketAPI\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
@@ -332,8 +331,7 @@
               "RelativeToolTip": "Program.cs",
               "ViewState": "AQIAADIAAAAAAAAAAAAQwDsAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-08T02:13:40.424Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-08T02:13:40.424Z"
             }
           ]
         }
