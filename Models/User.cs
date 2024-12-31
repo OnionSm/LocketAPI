@@ -43,11 +43,11 @@ public class User
     public string Password { get; set; } = "";
 
     [BsonElement("user_avatar_url")]
-    public string UserAvatarURL { get; set; } = "";
+    public byte[] UserAvatarURL { get; set; } = [];
 
     [BsonElement("friends")]
     public List<string> Friends { get; set; } = new List<string>();
 
     [BsonElement("account_deleted")]
-    public bool AccountDeleted {get; set;} = true;
+    public bool AccountDeleted {get; set;} = false;
 }

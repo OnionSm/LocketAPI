@@ -103,6 +103,17 @@ public class UserService
         var result = await _usersCollection.DeleteOneAsync(session, user => user.Id == id);
         return result.IsAcknowledged && result.DeletedCount > 0;
     }
+    public async Task<User> SetDeletedAccountAsync(string id, IClientSessionHandle session)
+    {
+        var user = await _usersCollection.Find(session, u => u.Id == id).FirstOrDefaultAsync();
+        user.AccountDeleted = true;
+        var res =  await DeleteUserAsync(id, session);
+        if (!res)
+        {
+            return null;
+        }
+        return user;
+    }
 
     public async Task<User> GetUserByPhoneNumberAsync(string phone_number, IClientSessionHandle session)
     {
@@ -150,6 +161,18 @@ public class UserService
         }   
         var update_user = Builders<User>.Update.Set(u => u.FirstName, first_name).Set(u => u.LastName, last_name);
         var update_result = await _usersCollection.UpdateOneAsync(u => u.Id == user_id, update_user);
+        return update_result.IsAcknowledged && update_result.ModifiedCount > 0;
+    }
+
+    public async Task<bool> ChangeAvatarAsync(string user_id, byte[] binaryData, IClientSessionHandle session)
+    {
+        var user = _usersCollection.Find(session, u => u.Id == user_id).FirstOrDefaultAsync();
+        if (user == null)
+        {
+            return false;
+        }
+        var data_update = Builders<User>.Update.Set(u => u.UserAvatarURL, binaryData);
+        var update_result = await _usersCollection.UpdateOneAsync(u => u.Id == user_id, data_update);
         return update_result.IsAcknowledged && update_result.ModifiedCount > 0;
     }
 }

@@ -12,17 +12,20 @@ public class UserController : ControllerBase
 {
     private readonly IMongoClient _mongo_client;
     private readonly UserService _userService;
+    private readonly DeletedUserService _delete_user_service;
     private readonly UserConversationService _user_conversation_service;
     private readonly UserFriendRequestService _user_friend_request_service;
     private readonly UserSessionService _user_session_service;
     public UserController(IMongoClient client,
     UserService userService,
+    DeletedUserService deletedUserService,
     UserConversationService user_conversation_service,
     UserFriendRequestService user_friend_request_service,
     UserSessionService user_session_service)
     {
         _mongo_client = client;
         _userService = userService;
+        _delete_user_service = deletedUserService;
         _user_conversation_service = user_conversation_service;
         _user_friend_request_service = user_friend_request_service;
         _user_session_service = user_session_service;
@@ -41,7 +44,7 @@ public class UserController : ControllerBase
                 
                 // Kiểm tra người dùng đã tồn tại chưa
                 User user_result = await _userService.GetUserByIdAsync(user.PublicUserId, session);
-                if (user_result != null || user.AccountDeleted == true)
+                if (user_result != null)
                 {
                     await session.AbortTransactionAsync();
                     return BadRequest("Không thể tạo mới user, user_id đã tồn tại");
@@ -324,16 +327,54 @@ public class UserController : ControllerBase
     }
 
     // DELETE - DELETE: /api/user/{id}
-    [HttpDelete("{id}")]
-    public async Task<ActionResult<string>> DeleteUser(string id)
+    // [HttpDelete("{id}")]
+    // public async Task<ActionResult<string>> DeleteUser(string id)
+    // {
+    //     using (var session = await _mongo_client.StartSessionAsync())
+    //     {
+    //         session.StartTransaction();
+    //         try
+    //         {
+    //             var success = await _userService.DeleteUserAsync(id, session);
+    //             if (!success)
+    //             {
+    //                 await session.AbortTransactionAsync();
+    //                 return BadRequest("Xóa người dùng thất bại!");
+    //             }
+    //             await session.CommitTransactionAsync();
+    //             return Ok("Xóa người dùng thành công!");
+    //         }
+    //         catch(Exception e)
+    //         {
+    //             await session.AbortTransactionAsync();
+    //             return BadRequest($"Đã xảy ra lỗi khi thực hiện giao dịch, error: {e}");
+    //         }
+    //     }
+        
+    // }
+
+    [HttpDelete("delete")]
+    public async Task<ActionResult<string>> DeleteUser()
     {
         using (var session = await _mongo_client.StartSessionAsync())
         {
             session.StartTransaction();
             try
             {
-                var success = await _userService.DeleteUserAsync(id, session);
-                if (!success)
+                var user_id = User.FindFirst("UserId")?.Value; 
+
+                if (string.IsNullOrEmpty(user_id))
+                {
+                    return Unauthorized("Không tìm thấy thông tin người dùng trong token.");
+                }
+                var  user  = await _userService.SetDeletedAccountAsync(user_id, session);
+                if (user == null)
+                {
+                    await session.AbortTransactionAsync();
+                    return BadRequest("Xóa người dùng thất bại!");
+                }
+                var res = await _delete_user_service.AddDeletedUserAsync(user, session);
+                if (!res)
                 {
                     await session.AbortTransactionAsync();
                     return BadRequest("Xóa người dùng thất bại!");
@@ -349,6 +390,7 @@ public class UserController : ControllerBase
         }
         
     }
+
 
     [HttpPut("change_user_name")]
     public async Task<IActionResult> ChangUsername([FromForm] string first_name, [FromForm] string last_name)
@@ -379,5 +421,48 @@ public class UserController : ControllerBase
                 return StatusCode(502 , "Bad Gateway");
             }
         }
+
+
+    }
+
+    [HttpPut("change_avatar")]
+    public async Task<IActionResult> ChangeAvatar()
+    {
+        using(var session = await _mongo_client.StartSessionAsync())
+        {
+            try
+            {
+                session.StartTransaction();
+                var user_id = User.FindFirst("UserId")?.Value;
+                if (user_id == null)
+                {
+                    await session.AbortTransactionAsync();
+                    return BadRequest();
+                }
+                using var memoryStream = new MemoryStream();
+                await Request.Body.CopyToAsync(memoryStream);
+                byte[] binaryData = memoryStream.ToArray();
+
+                if (binaryData.Length == 0)
+                {
+                    await session.AbortTransactionAsync();
+                    return BadRequest("Binary data is empty.");
+                }
+                var res = await _userService.ChangeAvatarAsync(user_id, binaryData, session);
+                if (!res)
+                {
+                    await session.AbortTransactionAsync();
+                    return BadRequest();
+                }
+                await session.CommitTransactionAsync();
+                return Ok(new { Message = "Avatar updated successfully"});
+            }
+            catch (Exception ex)
+            {
+                await session.AbortTransactionAsync();
+                return StatusCode(500, new { Message = "Error processing avatar", Error = ex.Message });
+            }
+        }
+        
     }
 }

@@ -28,7 +28,7 @@ public class LoginController: ControllerBase
             try
             {
                 var user = await _login_service.AuthenticateByEmailAsync(Email, Password);
-                if(user == null)
+                if(user == null )
                 {
                     await session.AbortTransactionAsync();
                     return Unauthorized("Không thể xác thực người dùng");
