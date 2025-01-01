@@ -43,7 +43,7 @@ public class User
     public string Password { get; set; } = "";
 
     [BsonElement("user_avatar_url")]
-    public byte[] UserAvatarURL { get; set; } = [];
+    public byte[] UserAvatarURL { get; set; } = new byte[0];
 
     [BsonElement("friends")]
     public List<string> Friends { get; set; } = new List<string>();
