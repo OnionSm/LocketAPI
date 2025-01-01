@@ -164,14 +164,14 @@ public class UserService
         return update_result.IsAcknowledged && update_result.ModifiedCount > 0;
     }
 
-    public async Task<bool> ChangeAvatarAsync(string user_id, byte[] binaryData, IClientSessionHandle session)
+    public async Task<bool> ChangeAvatarAsync(string user_id, string base64_img, IClientSessionHandle session)
     {
         var user = _usersCollection.Find(session, u => u.Id == user_id).FirstOrDefaultAsync();
         if (user == null)
         {
             return false;
         }
-        var data_update = Builders<User>.Update.Set(u => u.UserAvatarURL, binaryData);
+        var data_update = Builders<User>.Update.Set(u => u.UserAvatarURL, base64_img);
         var update_result = await _usersCollection.UpdateOneAsync(session, u => u.Id == user_id, data_update);
         return update_result.IsAcknowledged && update_result.ModifiedCount > 0;
     }

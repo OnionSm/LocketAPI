@@ -439,16 +439,17 @@ public class UserController : ControllerBase
                     await session.AbortTransactionAsync();
                     return BadRequest();
                 }
-                using var memoryStream = new MemoryStream();
-                await Request.Body.CopyToAsync(memoryStream);
-                byte[] binaryData = memoryStream.ToArray();
+                // Đọc chuỗi Base64 từ Request body
+                using var reader = new StreamReader(Request.Body);
+                string base64String = await reader.ReadToEndAsync();
 
-                if (binaryData.Length == 0)
+                if (string.IsNullOrEmpty(base64String))
                 {
                     await session.AbortTransactionAsync();
-                    return BadRequest("Binary data is empty.");
+                    return BadRequest("Base64 string is empty.");
                 }
-                var res = await _userService.ChangeAvatarAsync(user_id, binaryData, session);
+
+                var res = await _userService.ChangeAvatarAsync(user_id, base64String, session);
                 if (!res)
                 {
                     await session.AbortTransactionAsync();
