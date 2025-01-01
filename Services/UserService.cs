@@ -172,7 +172,7 @@ public class UserService
             return false;
         }
         var data_update = Builders<User>.Update.Set(u => u.UserAvatarURL, binaryData);
-        var update_result = await _usersCollection.UpdateOneAsync(u => u.Id == user_id, data_update);
+        var update_result = await _usersCollection.UpdateOneAsync(session, u => u.Id == user_id, data_update);
         return update_result.IsAcknowledged && update_result.ModifiedCount > 0;
     }
 }
