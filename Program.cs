@@ -37,7 +37,8 @@ builder.Services.AddScoped<UserSessionService>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<DeletedUserService>();
 builder.Services.AddScoped<FeedbackService>();
-
+builder.Services.AddScoped<FriendService>();
+builder.Services.AddScoped<StoryService>();
 
 DotNetEnv.Env.Load(); // Đọc tệp .env
 
