@@ -77,7 +77,7 @@ public class UserConversationController : ControllerBase
                     {
                         if (member != user_id)
                         {
-                            var user_data = await _user_service.GetUserDataByUserIdAsync(member);
+                            var user_data = await _user_service.GetUserDataByUserIdAsync(member,session);
                             if(user_data != null)
                             {
                                 cv_respone.GroupName = user_data.FirstName + " " + user_data.LastName;

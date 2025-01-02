@@ -250,10 +250,12 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<User>>  GetUserData()
+    public async Task<ActionResult<User>> GetUserData()
     {
+        using(var session = await _mongo_client.StartSessionAsync())
         try
         {
+            session.StartTransaction();
             var user_id = User.FindFirst("UserId")?.Value; 
 
                 if (string.IsNullOrEmpty(user_id))
@@ -261,7 +263,7 @@ public class UserController : ControllerBase
                     return Unauthorized("Không tìm thấy thông tin người dùng trong token.");
                 }
 
-            var user_data = await _userService.GetUserDataByUserIdAsync(user_id);
+            var user_data = await _userService.GetUserDataByUserIdAsync(user_id,session);
             if(user_data == null)
             {
                 return BadRequest("Không thể lấy thông tin người dùng");

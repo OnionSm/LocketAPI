@@ -48,12 +48,12 @@ public class UserService
         return await _usersCollection.Find(session, user => user.PublicUserId == public_user_id).FirstOrDefaultAsync();
     }
 
-    public async Task<User> GetUserDataByUserIdAsync(string user_id)
+    public async Task<User> GetUserDataByUserIdAsync(string user_id, IClientSessionHandle session)
     {
         try
         {
             Console.WriteLine("user_id :", user_id);
-            var user = await _usersCollection.Find(u => u.Id == user_id).FirstOrDefaultAsync();
+            var user = await _usersCollection.Find(session, u => u.Id == user_id).FirstOrDefaultAsync();
             return user;
         }
         catch (Exception ex)
@@ -61,6 +61,7 @@ public class UserService
             throw new UnauthorizedAccessException("Không thể lấy thông tin người dùng.", ex);
         }
     }
+    
 
 
     // UPDATE
