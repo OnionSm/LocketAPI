@@ -16,7 +16,7 @@ public class FriendRequest
     public string ReceiverId {get; set;} = "";
 
     [BsonElement("respone_status")]
-    public AddFriendResponeStatus? ResponeStatus {get; set;}
+    public AddFriendResponeStatus? ResponeStatus {get; set;} 
 
     [BsonElement("send_at")]
     public DateTime SendAt {get; set;} = DateTime.UtcNow;

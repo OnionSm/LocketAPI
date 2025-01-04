@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LocketAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cbc6af7df8bd609ae22665ec9cb5e214b448755c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cafc4c826d3dcfb6d15bdbe0d25fe1cee5482a2f")]
 [assembly: System.Reflection.AssemblyProductAttribute("LocketAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LocketAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

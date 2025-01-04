@@ -50,14 +50,12 @@ public class UserConversationController : ControllerBase
             try
             {
                 var user_id = User.FindFirst("UserId")?.Value;
-                Console.WriteLine(user_id);
                 if (string.IsNullOrEmpty(user_id))
                 {
                     await session.AbortTransactionAsync();
                     return Unauthorized("Không tìm thấy thông tin người dùng trong token.");
                 }
                 UserConversation user_conversation = await _user_conversation_service.GetUserConversationByIdAsync(user_id, session);
-                Console.WriteLine(user_conversation);
                 if (user_conversation == null)
                 {
                     await session.AbortTransactionAsync();

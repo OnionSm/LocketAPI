@@ -22,16 +22,13 @@ public class User
     public string LastName { get; set; } = "";
 
     [BsonElement("age")]
-    // [Range(0, 120, ErrorMessage = "Age must be between 0 and 120")]
     public int? Age { get; set; }
 
     [BsonElement("gender")]
-    // [RegularExpression("^(Male|Female|Other)$", ErrorMessage = "Gender must be Male, Female, or Other")]
     public string? Gender { get; set; } = "";
 
     [BsonElement("phone_number")]
-    [RegularExpression(@"^\d+$", ErrorMessage = "PhoneNumber must contain only numbers")]
-    public string? PhoneNumber { get; set; } 
+    public string PhoneNumber { get; set; } = "";
 
     [BsonElement("email")]
     [EmailAddress(ErrorMessage = "Invalid email format")]

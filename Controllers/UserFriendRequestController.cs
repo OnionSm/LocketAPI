@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
+
 [Route("api/users/friend-request")]
 [ApiController]
 public class UserFriendRequestController: ControllerBase
@@ -43,19 +45,29 @@ public class UserFriendRequestController: ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPost("add-friend")]
-    public async Task<ActionResult<string>> SendFriendshipInvitation([FromBody] FriendRequest request)
+    public async Task<ActionResult<string>> SendFriendshipInvitation([FromForm] FriendRequest request)
     {
         using (var session = await _mongo_client.StartSessionAsync())
         {
             try 
             {
                 session.StartTransaction();
+
+                var user_id = User.FindFirst("UserId")?.Value;
+                if(string.IsNullOrEmpty(user_id))
+                {
+                    await session.AbortTransactionAsync();
+                    return Unauthorized("Không tìm thấy thông tin người dùng trong token.");
+                }
+                request.SenderId = user_id;
                 var result = await _user_friend_request_service.AddNewFriendRequestAsync(request, session);
                 if(!result)
                 {
                     await session.AbortTransactionAsync();
-                    return BadRequest("Không thể gửi lời mời kết bạn");
+                    // return BadRequest("Không thể gửi lời mời kết bạn");
+                    return Ok();
                 }
                 await session.CommitTransactionAsync();
                 return Ok("Gửi lời mời kết bạn thành công!");
@@ -69,26 +81,45 @@ public class UserFriendRequestController: ControllerBase
         
     }
 
-    [HttpGet("receiver={id}")]
-    public async Task<ActionResult<List<FriendRequest>>> GetFriendRequestReceiveByUseId(string id)
+    [Authorize]
+    [HttpGet("receive")]
+    public async Task<ActionResult<List<FriendRequest>>> GetFriendRequestReceiveByUseId()
     {
         using (var session = await _mongo_client.StartSessionAsync())
         {
             session.StartTransaction();
             try
             {
-                var user_friend_request = await _user_friend_request_service.GetUserFriendRequestByUserIdAsync(id, session);
+                var user_id = User.FindFirst("UserId")?.Value;
+                if(string.IsNullOrEmpty(user_id))
+                {
+                    await session.AbortTransactionAsync();
+                    return Unauthorized("Không tìm thấy thông tin người dùng trong token.");
+                }
+                var user_friend_request = await _user_friend_request_service.GetUserFriendRequestByUserIdAsync(user_id, session);
                 if(user_friend_request == null)
                 {
                     await session.AbortTransactionAsync();
                     return NotFound("Không tìm thấy danh sách lời mời kết bạn");
                 }
-                List<FriendRequest> friend_requests = new List<FriendRequest>();
+                List<object> friend_requests = new List<object>();
+                
                 foreach(FriendRequest rq in user_friend_request.FriendRequests)
                 {
-                    if(rq.ResponeStatus == null && rq.SenderId != id)
+                    if(rq.ResponeStatus == null && rq.SenderId != user_id)
                     {
-                        friend_requests.Add(rq);
+                        var user = await _user_service.GetUserDataByUserIdAsync(rq.SenderId, session);
+                        if(user != null)
+                        {
+                            friend_requests.Add(new Dictionary<string, object>
+                            {
+                                { "id", rq.Id },
+                                { "first_name", user.FirstName },
+                                { "last_name", user.LastName },
+                                { "senderId", rq.SenderId },
+                                { "userAvatarURL", user.UserAvatarURL }
+                            });
+                        }
                     }
                 }
                 await session.CommitTransactionAsync();
@@ -165,26 +196,31 @@ public class UserFriendRequestController: ControllerBase
     }
 
     
-        
-    [HttpPut("respone/{request_id}-{sender_id}-{receiver_id}-{state}")]
-    public async Task<ActionResult<string>> ExecuteFriendRequest(string request_id, string sender_id, string receiver_id, bool state)
+    [Authorize]
+    [HttpPut("respone-request")]
+    public async Task<ActionResult<string>> ExecuteFriendRequest([FromForm] string request_id, [FromForm] string sender_id)
     {
         using (var session = await _mongo_client.StartSessionAsync())
         {
             try
             {
-                // Bắt đầu giao dịch
                 session.StartTransaction();
+                var user_id = User.FindFirst("UserId")?.Value;
 
+                if(string.IsNullOrEmpty(user_id))
+                {
+                    await session.AbortTransactionAsync();
+                    return Unauthorized("Không tìm thấy thông tin người dùng trong token.");
+                }
                 // Xử lý yêu cầu kết bạn
-                bool result = await _user_friend_request_service.ResponeFriendRequestAsync(request_id, sender_id, receiver_id, state, session);
+                bool result = await _user_friend_request_service.ResponeFriendRequestAsync(request_id, user_id, sender_id, session);
                 if (!result)
                 {
                     await session.AbortTransactionAsync();
                     return BadRequest("Không thể thực thi với lời mời kết bạn");
                 }
 
-                var add_fr_to_user_list_result = await _user_service.AddNewFriendAsync(receiver_id, sender_id, session);
+                var add_fr_to_user_list_result = await _user_service.AddNewFriendAsync(user_id, sender_id, session);
                 if(!add_fr_to_user_list_result) 
                 {
                     await session.AbortTransactionAsync();
@@ -195,7 +231,7 @@ public class UserFriendRequestController: ControllerBase
                 // Tạo cuộc trò chuyện mới
                 Conversation conversation = new Conversation();
                 conversation.Participants.Add(sender_id);
-                conversation.Participants.Add(receiver_id);
+                conversation.Participants.Add(user_id);
 
                 var result2 = await _conservation_service.CreateNewConversationAsync(conversation, session);
                 if (!result2)

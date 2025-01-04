@@ -52,7 +52,6 @@ public class UserService
     {
         try
         {
-            Console.WriteLine("user_id :", user_id);
             var user = await _usersCollection.Find(session, u => u.Id == user_id).FirstOrDefaultAsync();
             return user;
         }

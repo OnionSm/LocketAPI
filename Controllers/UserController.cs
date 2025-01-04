@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 
-[Authorize] 
 [Route("api/user")]
 [ApiController]
 public class UserController : ControllerBase
@@ -35,7 +34,7 @@ public class UserController : ControllerBase
     [HttpPost("create")]
     public async Task<ActionResult<User>> CreateUser([FromForm] User user)
     {
-        Console.WriteLine("Create User has been called");
+
         using (var session = await _mongo_client.StartSessionAsync())
         {
             try
@@ -202,7 +201,6 @@ public class UserController : ControllerBase
 
 
 
-    // READ - GET: /api/user
     [HttpGet("all")]
     public async Task<ActionResult<List<User>>> GetAllUsers()
     {
@@ -249,6 +247,7 @@ public class UserController : ControllerBase
         }
     }
 
+    [Authorize] 
     [HttpGet]
     public async Task<ActionResult<User>> GetUserData()
     {
@@ -328,33 +327,8 @@ public class UserController : ControllerBase
         
     }
 
-    // DELETE - DELETE: /api/user/{id}
-    // [HttpDelete("{id}")]
-    // public async Task<ActionResult<string>> DeleteUser(string id)
-    // {
-    //     using (var session = await _mongo_client.StartSessionAsync())
-    //     {
-    //         session.StartTransaction();
-    //         try
-    //         {
-    //             var success = await _userService.DeleteUserAsync(id, session);
-    //             if (!success)
-    //             {
-    //                 await session.AbortTransactionAsync();
-    //                 return BadRequest("Xóa người dùng thất bại!");
-    //             }
-    //             await session.CommitTransactionAsync();
-    //             return Ok("Xóa người dùng thành công!");
-    //         }
-    //         catch(Exception e)
-    //         {
-    //             await session.AbortTransactionAsync();
-    //             return BadRequest($"Đã xảy ra lỗi khi thực hiện giao dịch, error: {e}");
-    //         }
-    //     }
-        
-    // }
-
+    
+    [Authorize] 
     [HttpDelete("delete")]
     public async Task<ActionResult<string>> DeleteUser()
     {
@@ -393,7 +367,7 @@ public class UserController : ControllerBase
         
     }
 
-
+    [Authorize] 
     [HttpPut("change_user_name")]
     public async Task<IActionResult> ChangUsername([FromForm] string first_name, [FromForm] string last_name)
     {
@@ -427,6 +401,7 @@ public class UserController : ControllerBase
 
     }
 
+    [Authorize] 
     [HttpPut("change_avatar")]
     public async Task<IActionResult> ChangeAvatar()
     {
