@@ -74,17 +74,15 @@ public class UserFriendRequestService
             && update_result_2.IsAcknowledged && update_result_2.ModifiedCount > 0;
     } 
 
-    public async Task<bool> ResponeFriendRequestAsync(string request_id, 
+    public async Task<bool> ResponeFriendRequestAsync(string request_id, string user_id,
     string sender_id, 
-    string receiver_id, 
-    bool state, 
     IClientSessionHandle session)
     {
         // Find friend resquest form
-        var user_send_respone_fr = await GetUserFriendRequestByUserIdAsync(sender_id, session); // who accept the friend invitation
-        var user_receive_respone_fr = await GetUserFriendRequestByUserIdAsync(receiver_id, session); // who send the friend invitation
+        var user_send_respone_fr = await GetUserFriendRequestByUserIdAsync(user_id, session); // who accept the friend invitation
+        var user_receive_respone_fr = await GetUserFriendRequestByUserIdAsync(sender_id, session); // who send the friend invitation
 
-        var request = user_send_respone_fr.FriendRequests.FirstOrDefault(rq => rq.ReceiverId == sender_id || rq.SenderId == receiver_id);
+        var request = user_send_respone_fr.FriendRequests.FirstOrDefault(rq => rq.ReceiverId == user_id || rq.SenderId == sender_id);
         if(request == null)
         {
             return false;
@@ -100,7 +98,7 @@ public class UserFriendRequestService
             if (rq.Id == request_id)
             {
                 rq.UpdateAt = DateTime.UtcNow;
-                rq.ResponeStatus = state ? AddFriendResponeStatus.ACCEPTED : AddFriendResponeStatus.DENIED;
+                rq.ResponeStatus =  AddFriendResponeStatus.ACCEPTED;
             }
         }
 
@@ -109,7 +107,7 @@ public class UserFriendRequestService
             if (rq.Id == request_id)
             {
                 rq.UpdateAt = DateTime.UtcNow;
-                rq.ResponeStatus = state ? AddFriendResponeStatus.ACCEPTED : AddFriendResponeStatus.DENIED;
+                rq.ResponeStatus =  AddFriendResponeStatus.ACCEPTED;
             }
         }
 

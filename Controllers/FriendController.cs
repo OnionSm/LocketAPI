@@ -51,4 +51,38 @@ public class FriendController : ControllerBase
             }
         }
     }
+
+    [HttpPost("user")]
+    public async Task<ActionResult> GetUserData([FromForm] string public_user_id)
+    {
+        try
+        {
+            var user_id = User.FindFirst("UserId")?.Value; 
+
+            if (string.IsNullOrEmpty(user_id))
+            {
+                return Unauthorized();
+            }
+            var user = await _friend_service.GetUserDataAsync(user_id, public_user_id);
+
+            if (user == null || user.Id == user_id)
+            {
+                return NotFound(); 
+            }
+
+            return Ok(new
+            {
+                user.Id,
+                user.PublicUserId,
+                user.FirstName,
+                user.LastName,
+                user.UserAvatarURL
+            });
+        }
+        catch (Exception ex)
+        {
+            // Xử lý lỗi, có thể log thông tin lỗi
+            return StatusCode(500, new { message = "An error occurred", details = ex.Message }); // Trả về mã lỗi 500 với thông tin chi tiết
+        }
+    }
 }

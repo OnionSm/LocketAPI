@@ -21,7 +21,6 @@ public class LoginController: ControllerBase
     [HttpPost("email")]
     public async Task<IActionResult> LoginByEmail([FromForm] string Email, [FromForm] string Password)
     {
-        Console.WriteLine("Email has been checked");
         using(var session = await _mongo_client.StartSessionAsync())
         {
             session.StartTransaction();
