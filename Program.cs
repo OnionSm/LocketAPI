@@ -89,6 +89,7 @@ builder.Services.AddCors(options =>
     });
 });
 
+
 builder.Services.AddAuthorization();
 builder.Services.AddSignalR();
 builder.Services.AddControllers();
@@ -105,5 +106,5 @@ app.MapControllers();
 // Ánh xạ các Hub
 app.MapHub<ChatHub>("/chathub"); 
 
-app.MapGet("/", () => "Hello, World!");
+app.MapGet("/hello", () => "Hello, World!");
 app.Run();

@@ -24,5 +24,8 @@ public class Story
     [BsonElement("created_at")]
     public DateTime created_at {get; set;} = DateTime.UtcNow;
 
+    [BsonElement("seen")]
+    public bool Seen { get; set;} = false;
+
     
 }
