@@ -14,6 +14,8 @@ public class StoryController: ControllerBase
     private readonly StoryService _story_service;
     private readonly UserService _user_serivice;
 
+    private readonly int max_story_iamge_respone = 5;
+
     public StoryController(IMongoClient client, StoryService story_service, UserService user_service)
     {
         _mongo_client = client;
@@ -61,87 +63,83 @@ public class StoryController: ControllerBase
 
 
     [HttpPost("get_story")]
-    public async Task<IActionResult> GetStoryFromFriend([FromForm] List<String> list_story_in_user)
+public async Task<IActionResult> GetStoryFromFriend([FromForm] List<String> list_story_in_user)
+{
+    Console.WriteLine(JsonConvert.SerializeObject(list_story_in_user));
+    
+    using (var session = await _mongo_client.StartSessionAsync())
     {
-        Console.WriteLine(JsonConvert.SerializeObject(list_story_in_user));
-        
-        using(var session = await _mongo_client.StartSessionAsync())
+        try
         {
-            try
+            session.StartTransaction();
+            
+            var user_id = User.FindFirst("UserId")?.Value; 
+
+            if (string.IsNullOrEmpty(user_id))
             {
-                session.StartTransaction();
-                
-                var user_id = User.FindFirst("UserId")?.Value; 
+                await session.AbortTransactionAsync();
+                return Unauthorized("Không tìm thấy thông tin người dùng trong token.");
+            }
 
-                if (string.IsNullOrEmpty(user_id))
+            User user = await _user_serivice.GetUserDataByUserIdAsync(user_id, session);
+            if (user == null)
+            {
+                await session.AbortTransactionAsync();
+                return Unauthorized("Không tìm thấy thông tin người dùng trong token.");
+            }
+            
+            var list_friend = user.Friends;
+            List<Story> list_story = new List<Story>();
+
+            // Lấy các story của người dùng
+            var my_stories = await _story_service.GetMyStoryAsync(user_id, session);
+            foreach (var story in my_stories)
+            {
+                if (!list_story_in_user.Contains(story.Id))
                 {
-                    await session.AbortTransactionAsync();
-                    return Unauthorized("Không tìm thấy thông tin người dùng trong token.");
+                    list_story.Add(story);
                 }
+            }
 
-                User user = await _user_serivice.GetUserDataByUserIdAsync(user_id, session);
-                if (user == null)
+            // Lấy các story của bạn bè
+            foreach (string friend in list_friend)
+            {
+                var stories = await _story_service.GetStoryFromUserIdAsync(user_id, friend, session);
+                foreach (var story in stories)
                 {
-                    await session.AbortTransactionAsync();
-                    return Unauthorized("Không tìm thấy thông tin người dùng trong token.");
-                }
-
-                
-                var list_friend = user.Friends;
-                List<Story> list_story = new List<Story>();
-
-                var my_stories = await _story_service.GetMyStoryAsync(user_id, session);
-                foreach(var story in my_stories)
-                {
-                    bool has_exist = false;
-                    foreach(string id in list_story_in_user)
-                    {
-                        if(story.Id == id)
-                        {
-                            has_exist = true; 
-                            break; 
-                        }
-                    }
-                    if(!has_exist)
+                    if (!list_story_in_user.Contains(story.Id))
                     {
                         list_story.Add(story);
                     }
                 }
-
-                foreach (string friend in list_friend)
-                {
-                    var stories = await _story_service.GetStoryFromUserIdAsync(user_id, friend, session);
-                    foreach (var story in stories)
-                    {
-                        bool has_exist = false;
-                        foreach(string id in list_story_in_user)
-                        {
-                            if(story.Id == id)
-                            {
-                                has_exist = true;
-                                break;
-                            }
-                        }
-                        if(!has_exist)
-                        {   
-                            list_story.Add(story);
-                        }
-                    }
-                }
-
-                await session.CommitTransactionAsync();
-                return Ok(list_story);
             }
-            catch(Exception)
-            {
-                await session.AbortTransactionAsync();
-                return BadRequest();
-            }
+
+            // // Sắp xếp theo created_at giảm dần
+            // list_story = list_story.OrderByDescending(story => story.created_at).ToList();
+
+            // // Xử lý hình ảnh
+            // for (int i = 0; i < list_story.Count; i++)
+            // {
+            //     if (i >= 3)
+            //     {
+            //         list_story[i].ImageURL = ""; // Bỏ hình ảnh với các phần tử còn lại
+            //     }
+            // }
+
+            await session.CommitTransactionAsync();
+            return Ok(list_story);
+        }
+        catch (Exception)
+        {
+            await session.AbortTransactionAsync();
+            return BadRequest();
         }
     }
+}
+
 
     [Authorize]
-    [HttpGet("get_story/image")]
+    [HttpPost("get_story/image")]
     public async Task<ActionResult<Story>> GetStoryImage([FromForm] string story_id)
     {
         try

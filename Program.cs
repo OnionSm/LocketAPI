@@ -106,5 +106,9 @@ app.MapControllers();
 // Ánh xạ các Hub
 app.MapHub<ChatHub>("/chathub"); 
 
-app.MapGet("/hello", () => "Hello, World!");
+app.MapGet("/hello", () =>
+{
+    Console.WriteLine("Endpoint /hello was called.");
+    return "Hello, World!";
+});
 app.Run();
