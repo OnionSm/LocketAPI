@@ -32,7 +32,6 @@ public class User
 
     [BsonElement("email")]
     [EmailAddress(ErrorMessage = "Invalid email format")]
-    [RegularExpression(@"^[\w\.\-]+@gmail\.com$", ErrorMessage = "Email must be a Gmail address")]
     public string? Email { get; set; } 
 
     [BsonElement("password")]
@@ -47,4 +46,7 @@ public class User
 
     [BsonElement("account_deleted")]
     public bool AccountDeleted {get; set;} = false;
+
+    [BsonElement("show_user")]
+    public bool ShowUser {get; set;} = true;
 }

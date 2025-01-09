@@ -65,10 +65,12 @@ public class FriendController : ControllerBase
             }
             var user = await _friend_service.GetUserDataAsync(user_id, public_user_id);
 
-            if (user == null || user.Id == user_id)
+
+            if (user == null || user.Id == user_id || user.ShowUser == false)
             {
                 return NotFound(); 
             }
+        
 
             return Ok(new
             {

@@ -397,8 +397,70 @@ public class UserController : ControllerBase
                 return StatusCode(502 , "Bad Gateway");
             }
         }
+    }
 
+    [Authorize] 
+    [HttpPut("change_email")]
+    public async Task<IActionResult> ChangUsername([FromForm] string email)
+    {
+        using(var session = await _mongo_client.StartSessionAsync())
+        {
+            session.StartTransaction();
+            try
+            {
+                var user_id = User.FindFirst("UserId")?.Value;
+                if (user_id == null)
+                {
+                    await session.AbortTransactionAsync();
+                    return BadRequest();
+                }
+                var res = await _userService.ChangeUserEmailAsync(user_id, email, session);
+                if (!res)
+                {
+                    await session.AbortTransactionAsync();
+                    return BadRequest();
+                }
+                await session.CommitTransactionAsync();
+                return Ok();
+            }
+            catch(Exception)
+            {
+                await session.AbortTransactionAsync();
+                return StatusCode(502 , "Bad Gateway");
+            }
+        }
+    }
 
+    [Authorize] 
+    [HttpPut("show_user")]
+    public async Task<IActionResult> ChangUsername([FromForm] bool show_user)
+    {
+        using(var session = await _mongo_client.StartSessionAsync())
+        {
+            session.StartTransaction();
+            try
+            {
+                var user_id = User.FindFirst("UserId")?.Value;
+                if (user_id == null)
+                {
+                    await session.AbortTransactionAsync();
+                    return BadRequest();
+                }
+                var res = await _userService.ChangeShowUSerAsync(user_id, show_user, session);
+                if (!res)
+                {
+                    await session.AbortTransactionAsync();
+                    return BadRequest();
+                }
+                await session.CommitTransactionAsync();
+                return Ok();
+            }
+            catch(Exception)
+            {
+                await session.AbortTransactionAsync();
+                return StatusCode(502 , "Bad Gateway");
+            }
+        }
     }
 
     [Authorize] 
