@@ -30,4 +30,18 @@ public class StoryService
         return list_story;
     }
 
+    public async Task<List<Story>> GetMyStoryAsync(string user_id, IClientSessionHandle session)
+    {
+        List<Story> list_story = await _story_collection
+            .Find(s => s.UserId == user_id)
+            .ToListAsync();
+        return list_story;
+    }
+
+    public async Task<Story> GetStoryAsync(string story_id)
+    {
+        var story = await _story_collection.Find(s => s.Id == story_id).FirstOrDefaultAsync();
+        return story;
+    }
+
 }
