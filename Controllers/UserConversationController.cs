@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using MongoDB.Bson;
+using System.Text.Json;
+
 
 [Authorize] 
 [Route("api/userconversation")]
@@ -55,45 +57,122 @@ public class UserConversationController : ControllerBase
                     await session.AbortTransactionAsync();
                     return Unauthorized("Không tìm thấy thông tin người dùng trong token.");
                 }
-                UserConversation user_conversation = await _user_conversation_service.GetUserConversationByIdAsync(user_id, session);
+                UserConversation user_conversation = await _user_conversation_service.GetUserConversationByIdAsync(user_id);
                 if (user_conversation == null)
                 {
                     await session.AbortTransactionAsync();
                     return NotFound();
                 }
-                List<ConversationRespone> data_respone = new List<ConversationRespone>();
-                foreach(Conversation c in user_conversation.UserConversations)
-                {
-                    ConversationRespone cv_respone = new ConversationRespone();
-                    cv_respone.Id = c.Id;
-                    cv_respone.Participants = c.Participants;
-                    cv_respone.ListMessages = c.ListMessages;
-                    cv_respone.LastMessage = c.LastMessage;
-                    cv_respone.CreatedAt = c.CreatedAt;
-                    cv_respone.UpdatedAt = c.UpdatedAt;
-                    foreach (string member in c.Participants)
-                    {
-                        if (member != user_id)
-                        {
-                            var user_data = await _user_service.GetUserDataByUserIdAsync(member,session);
-                            if(user_data != null)
-                            {
-                                cv_respone.GroupName = user_data.FirstName + " " + user_data.LastName;
-                                cv_respone.GroupAvatarUrl = user_data.UserAvatarURL;
-                                break;
-                            }
-                        }
-                    }
-                    data_respone.Add(cv_respone);
-                }
+                // List<ConversationRespone> data_respone = new List<ConversationRespone>();
+                // foreach(Conversation c in user_conversation.UserConversations)
+                // {
+                //     ConversationRespone cv_respone = new ConversationRespone();
+                //     cv_respone.Id = c.Id;
+                //     cv_respone.Participants = c.Participants;
+                //     cv_respone.ListMessages = c.ListMessages;
+                //     cv_respone.LastMessage = c.LastMessage;
+                //     cv_respone.CreatedAt = c.CreatedAt;
+                //     cv_respone.UpdatedAt = c.UpdatedAt;
+                //     foreach (string member in c.Participants)
+                //     {
+                //         if (member != user_id)
+                //         {
+                //             var user_data = await _user_service.GetUserDataByUserIdAsync(member,session);
+                //             if(user_data != null)
+                //             {
+                //                 cv_respone.GroupName = user_data.FirstName + " " + user_data.LastName;
+                //                 cv_respone.GroupAvatarUrl = user_data.UserAvatarURL;
+                //                 break;
+                //             }
+                //         }
+                //     }
+                //     data_respone.Add(cv_respone);
+                // }
+                // await session.CommitTransactionAsync();
+                // return Ok(data_respone);
                 await session.CommitTransactionAsync();
-                return Ok(data_respone);
+                return Ok(user_conversation);
             }
             catch (Exception e)
             {
                 await session.AbortTransactionAsync();
                 return BadRequest($"Đã xảy ra lỗi khi thực hiện giao dịch, error {e}");
             }
+        }
+    }
+
+
+    // Lấy các tin nhắn mới nhất của tất cả các friend của user
+    [HttpPost("get_list_latest_message")]
+    public async Task<ActionResult<UserConversation>> GetLatestMessage([FromForm] string conversation_id, [FromForm] string message_id)
+    {
+        try
+        {
+            var user_id = User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(user_id))
+            {
+                return Unauthorized("Không tìm thấy thông tin người dùng trong token.");
+            }
+            
+            var user_conversation = await _user_conversation_service.GetListLatestMessageAsync(user_id, conversation_id, message_id);
+            // Chuyển đối tượng sang JSON
+            string json = JsonSerializer.Serialize(user_conversation);
+
+            Console.WriteLine(json);
+            if (user_conversation == null)
+            {
+                return NotFound("Dữ liệu không tồn tại.");
+            }
+            if (user_conversation.UserConversations.Count == 0)
+            {
+                return NoContent();
+            }
+            return Ok(user_conversation);
+        }
+        catch(Exception e)
+        {
+            return BadRequest();
+        }
+    }
+
+
+    // Lấy các tin nhắn cũ hơn khi cuộn 
+    [HttpPost("load_older_message")]
+    public async Task<ActionResult<List<Message>>> LoadOlderMessage([FromForm] string conversation_id, [FromForm] string local_oldest_message)
+    {
+        try
+        {   
+            var user_id = User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(user_id))
+            {
+                return Unauthorized("Không tìm thấy thông tin người dùng trong token.");
+            }
+            var list_message = await _user_conversation_service.LoadOlderMessageAsync(user_id, conversation_id, local_oldest_message);
+            return Ok(list_message);
+        }
+        catch(Exception e)
+        {
+            return BadRequest();
+        }
+    }
+
+        
+    [HttpGet("get_latest_message")]
+    public async Task<ActionResult<UserConversation>> GetInitMessage()
+    {
+        try 
+        {
+            var user_id = User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(user_id))
+            {
+                return Unauthorized("Không tìm thấy thông tin người dùng trong token.");
+            }
+            var user_conversation = await _user_conversation_service.GetLatestMessageAsync(user_id);
+            return Ok(user_conversation);
+        }
+        catch(Exception e) 
+        {
+            return BadRequest();
         }
     }
 
@@ -111,7 +190,7 @@ public class UserConversationController : ControllerBase
                     await session.AbortTransactionAsync();
                     return Unauthorized("Không tìm thấy thông tin người dùng trong token.");
                 }
-                UserConversation user_conversation = await _user_conversation_service.GetUserConversationByIdAsync(user_id, session);
+                UserConversation user_conversation = await _user_conversation_service.GetUserConversationByIdAsync(user_id);
                 if(user_conversation == null)
                 {
                     await session.AbortTransactionAsync();
@@ -133,6 +212,48 @@ public class UserConversationController : ControllerBase
             }
         }
 
+    }
+
+    [HttpGet("get_user_conversation")]
+    public async Task<ActionResult<UserConversation>> GetInitUserConversation()
+    {
+        try
+        {
+            var user_id = User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(user_id))
+            {
+                return Unauthorized("Không tìm thấy thông tin người dùng trong token.");
+            }
+            UserConversation user_conversation = await _user_conversation_service.GetUserConversationByIdAsync(user_id);
+            if (user_conversation == null)
+            {
+                return NotFound();
+            }
+            UserConversation init_user_conversation = new UserConversation
+            {
+                Id = user_conversation.Id,
+                UserId = user_conversation.UserId,
+                UserConversations = new List<Conversation>()
+            };
+            foreach(Conversation conversation in user_conversation.UserConversations)
+            {
+                Conversation new_conversation = new Conversation
+                {
+                    Id = conversation.Id,
+                    Participants = conversation.Participants,
+                    ListMessages = new List<Message>(),
+                    LastMessage = conversation.LastMessage,
+                    CreatedAt = conversation.CreatedAt,
+                    UpdatedAt = conversation.CreatedAt
+                };
+                init_user_conversation.UserConversations.Add(new_conversation);
+            }
+            return Ok(init_user_conversation);
+        }
+        catch (Exception e)
+        {
+            return BadRequest($"Đã xảy ra lỗi khi thực hiện giao dịch, error {e}");
+        }
     }
 
     // [HttpGet]

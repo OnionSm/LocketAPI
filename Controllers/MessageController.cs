@@ -38,7 +38,6 @@ public class MessageController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateMessage([FromForm] Message message)
     {
-        Console.WriteLine(message.ToJson());
         using (var session = await _mongo_client.StartSessionAsync())
         {
             session.StartTransaction();
