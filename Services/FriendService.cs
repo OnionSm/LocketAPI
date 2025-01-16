@@ -26,7 +26,7 @@ public class FriendService
       
         var friends = await _userCollection
             .Find(session, u => user.Friends.Contains(u.Id))
-            .ToListAsync();
+            .ToListAsync(); 
 
      
         var friendInfoList = friends

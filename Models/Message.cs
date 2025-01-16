@@ -25,8 +25,5 @@ public class Message
 
     [BsonElement("reply_to_story_id")]
     public string? ReplyToStoryId {get; set;} 
-
-
-
 }
    
