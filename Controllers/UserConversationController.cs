@@ -40,7 +40,6 @@ public class UserConversationController : ControllerBase
                 return BadRequest($"Đã xảy ra lỗi khi thực hiện giao dịch, error: {e}");
             }
         }
-        
     }
 
     [HttpGet]

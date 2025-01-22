@@ -21,6 +21,7 @@ public class StoryService
         await _story_collection.InsertOneAsync(session, story);
     }
 
+    // Lấy danh sách story bạn bè
     public async Task<List<Story>> GetStoryFromUserIdAsync(string user_id, string uploader, IClientSessionHandle session)
     {
         List<Story> list_story = await _story_collection
@@ -30,6 +31,7 @@ public class StoryService
         return list_story;
     }
 
+    // Lấy danh sách story của bản thân 
     public async Task<List<Story>> GetMyStoryAsync(string user_id, IClientSessionHandle session)
     {
         List<Story> list_story = await _story_collection

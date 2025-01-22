@@ -141,18 +141,31 @@ public class UserConversationService
             UserId = userconversation.UserId,
             UserConversations = new List<Conversation>()
         };
-        
+
         // Tìm conversation tương ứng trên server
         var conversation = userconversation.UserConversations
             .FirstOrDefault(c => c.Id == conversation_id);
 
         if (conversation != null)
         {
-            // Lấy tất cả tin nhắn mới hơn `item.message_id` bằng LINQ
-            var list_message = conversation.ListMessages
-                .SkipWhile(m => m.Id != message_id) // Bỏ qua đến khi gặp message_id
-                .Skip(1) // Bỏ qua message hiện tại
-                .ToList();
+            List<Message> list_message;
+
+            if (message_id == "all")
+            {
+                // Nếu `message_id` rỗng, lấy 30 tin nhắn mới nhất
+                list_message = conversation.ListMessages
+                    .OrderByDescending(m => m.SendAt) // Sắp xếp giảm dần theo thời gian gửi
+                    .Take(30) // Lấy tối đa 30 tin nhắn
+                    .ToList();
+            }
+            else
+            {
+                // Nếu `message_id` không rỗng, chỉ lấy các tin nhắn sau `message_id`
+                list_message = conversation.ListMessages
+                    .SkipWhile(m => m.Id != message_id) // Bỏ qua đến khi gặp message_id
+                    .Skip(1) // Bỏ qua message hiện tại
+                    .ToList();
+            }
 
             if (list_message.Count > 0)
             {
@@ -162,16 +175,25 @@ public class UserConversationService
                     Id = conversation.Id,
                     Participants = conversation.Participants,
                     ListMessages = list_message,
-                    LastMessage = list_message.Last(),
+                    LastMessage = conversation.LastMessage,
                     CreatedAt = conversation.CreatedAt,
                     UpdatedAt = list_message.Last().SendAt
                 };
 
                 user_conversation.UserConversations.Add(new_conversation);
             }
+            else
+            {
+                Console.WriteLine(string.IsNullOrEmpty(message_id)
+                    ? "Không có tin nhắn nào trong conversation."
+                    : $"Không tìm thấy message nào sau message_id: {message_id}");
+            }
         }
-        
-        Console.WriteLine("OK");
+        else
+        {
+            Console.WriteLine($"Không tìm thấy conversation với ID: {conversation_id}");
+        }
+
         return user_conversation;
     }
 
@@ -278,5 +300,26 @@ public class UserConversationService
         };
 
         return user_conversation;
+    }
+
+    public async Task<Conversation?> GetConversationByParticipantsAsync(string p1_id, string p2_id)
+    {
+        // Tìm thông tin người dùng liên quan trong collection
+        var userConversation = await _user_conversation_collection
+            .Find(u => u.UserId == p1_id)
+            .FirstOrDefaultAsync();
+
+        // Trả về null nếu không tìm thấy
+        if (userConversation == null)
+        {
+            return null;
+        }
+
+        // Tìm cuộc trò chuyện chứa participant p2_id
+        var conversation = userConversation.UserConversations
+            .FirstOrDefault(c => c.Participants.Contains(p2_id));
+
+        // Trả về kết quả
+        return conversation;
     }
 }

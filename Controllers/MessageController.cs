@@ -75,7 +75,6 @@ public class MessageController : ControllerBase
                         await _user_conservation_service.AddNewMessageAsync(participant, message, session);
                     }
                     await session.CommitTransactionAsync();
-                    await _hubContext.Clients.All.SendAsync("SendMessage", result);
                     return CreatedAtAction(nameof(GetMessageById), new { id = message.Id }, message);
                 }
                 else
@@ -92,6 +91,8 @@ public class MessageController : ControllerBase
         }
         
     }
+
+    
 
     [HttpPost("send")]
     public async Task<IActionResult> SendMessage([FromForm] string user , [FromForm] string message)
