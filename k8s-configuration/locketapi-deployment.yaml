@@ -1,0 +1,88 @@
+apiVersion:  apps/v1
+kind: Deployment
+metadata:
+  name: locketapi
+  labels:
+    app: locketapi
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: locketapi
+  template:
+    metadata:
+      labels:
+        app: locketapi
+    spec:
+      containers:
+      - name: locketapi
+        image: onionsm/locketapi:1.7
+        ports:
+        - containerPort: 8081
+        env: 
+        - name: DatabaseName
+          valueFrom:
+            configMapKeyRef:
+              name: mongodb-configmap
+              key: DatabaseName
+        - name: MONGO_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: mongo-root-username
+        - name: MONGO_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: mongo-root-password
+        - name: MONGO_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: mongodb-configmap
+              key: MONGO_DATABASE
+        - name: PRIMARY_MONGO_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: mongodb-configmap
+              key: PRIMARY_MONGO_NAME
+        - name: MONGO_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: mongodb-configmap
+              key: MONGO_PORT
+        - name: MONGO_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: mongodb-configmap
+              key: MONGO_HOST
+        - name: AUTH_MECHANISM
+          valueFrom:
+            configMapKeyRef:
+              name: mongodb-configmap
+              key: AUTH_MECHANISM
+        - name: MongoDBConnectionURI
+          valueFrom:
+            configMapKeyRef:
+              name: mongodb-configmap
+              key: MongoDBConnectionURI
+        - name: JWT_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: locketapi-secret
+              key: JWT_SECRET_KEY
+        - name: Issuer
+          valueFrom:
+            configMapKeyRef:
+              name: locketapi-configmap
+              key: Issuer
+        - name: Audience
+          valueFrom:
+            configMapKeyRef:
+              name: locketapi-configmap
+              key: Audience
+        - name: TokenLifespan
+          valueFrom:
+            configMapKeyRef:
+              name: locketapi-configmap
+              key: TokenLifespan
+          
