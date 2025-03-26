@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: locketapi
-        image: onionsm/locketapi:1.7
+        image: onionsm/locketapi:2.6
         ports:
         - containerPort: 8081
         env: 
@@ -28,13 +28,13 @@ spec:
         - name: MONGO_USERNAME
           valueFrom:
             secretKeyRef:
-              name: mongodb-secret
-              key: mongo-root-username
+              name: locketapi-secret
+              key: MONGODB_USERNAME
         - name: MONGO_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mongodb-secret
-              key: mongo-root-password
+              name: locketapi-secret
+              key: MONGODB_PASSWORD
         - name: MONGO_DATABASE
           valueFrom:
             configMapKeyRef:
@@ -55,11 +55,13 @@ spec:
             configMapKeyRef:
               name: mongodb-configmap
               key: MONGO_HOST
+        # - name: AUTH_MECHANISM
+        #   valueFrom:
+        #     configMapKeyRef:
+        #       name: mongodb-configmap
+        #       key: AUTH_MECHANISM
         - name: AUTH_MECHANISM
-          valueFrom:
-            configMapKeyRef:
-              name: mongodb-configmap
-              key: AUTH_MECHANISM
+          value: "SCRAM-SHA-256"    
         - name: MongoDBConnectionURI
           valueFrom:
             configMapKeyRef:

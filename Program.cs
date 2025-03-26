@@ -6,22 +6,53 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 
+DotNetEnv.Env.Load(); // Đọc tệp .env
+
+// var builder = WebApplication.CreateBuilder(args);
+
+// // Đăng ký MongoClient với ConnectionString từ MongoDBSettings
+// builder.Services.AddSingleton<IMongoClient>(s =>
+// {
+//     var connection_url = Environment.GetEnvironmentVariable("MongoDBConnectionURI");
+//     return new MongoClient(connection_url);
+// });
+
+
+// // Đăng ký IMongoDatabase
+// builder.Services.AddScoped(s =>
+// {
+//     var client = s.GetRequiredService<IMongoClient>();
+//     var database_name = Environment.GetEnvironmentVariable("DatabaseName");
+//     return client.GetDatabase(database_name);
+// });
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Đăng ký MongoClient với ConnectionString từ MongoDBSettings
 builder.Services.AddSingleton<IMongoClient>(s =>
 {
-    var connection_url = Environment.GetEnvironmentVariable("MongoDBConnectionURI");
-    return new MongoClient(connection_url);
-});
+    var MONGO_USERNAME = Environment.GetEnvironmentVariable("MONGO_USERNAME");
+    var MONGO_PASSWORD = Environment.GetEnvironmentVariable("MONGO_PASSWORD");
+    var AUTH_MECHANISM = Environment.GetEnvironmentVariable("AUTH_MECHANISM");
+    // var connection_url = $"mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@mongodb-0.mongodb-service:27017,mongodb-1.mongodb-service:27017,mongodb-2.mongodb-service:27017/?replicaSet=rs0&authSource=admin";
+    var connection_url = $"mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@mongodb-0.mongodb-service:27017,mongodb-1.mongodb-service:27017,mongodb-2.mongodb-service:27017/?replicaSet=rs0&authMechanism=SCRAM-SHA-256&authSource=Locket";
 
+    // var connection_url = Environment.GetEnvironmentVariable("MongoDBConnectionURI");
+ 
+    Console.WriteLine("Connection url " + connection_url);
+    var client = new MongoClient(connection_url);
+    Console.WriteLine("MongoClient initialized successfully.");
+    return client;
+});
 
 // Đăng ký IMongoDatabase
 builder.Services.AddScoped(s =>
 {
     var client = s.GetRequiredService<IMongoClient>();
     var database_name = Environment.GetEnvironmentVariable("DatabaseName");
-    return client.GetDatabase(database_name);
+    var database = client.GetDatabase(database_name);
+    Console.WriteLine($"Connected to database: {database_name}");
+    return database;
 });
 
 
@@ -40,7 +71,6 @@ builder.Services.AddScoped<FeedbackService>();
 builder.Services.AddScoped<FriendService>();
 builder.Services.AddScoped<StoryService>();
 
-DotNetEnv.Env.Load(); // Đọc tệp .env
 
 // Cấu hình JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -104,11 +134,19 @@ app.UseCors("AllowAll");
 app.MapControllers();
 
 // Ánh xạ các Hub
-app.MapHub<ChatHub>("/chathub"); 
+app.MapHub<ChatHub>("/chathub");
 
+// Endpoint /hello
 app.MapGet("/hello", () =>
 {
     Console.WriteLine("Endpoint /hello was called.");
     return "Hello, World!";
+});
+
+// Endpoint mặc định
+app.MapGet("", () =>
+{
+    Console.WriteLine("Endpoint / was called.");
+    return "Welcome to LOCKET API";
 });
 app.Run();
