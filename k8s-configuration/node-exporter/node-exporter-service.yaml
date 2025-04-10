@@ -7,9 +7,9 @@ spec:
     app: node-exporter
   type: NodePort
   ports:
-    - protocol: TCP
+    - name: metrics
+      protocol: TCP
       port: 9100
       targetPort: 9100
       nodePort: 30002
-
 

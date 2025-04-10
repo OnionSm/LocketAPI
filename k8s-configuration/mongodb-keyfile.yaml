@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongodb-keyfile
+type: Opaque
+data:
+  mongodb-keyfile: |
+    4Ob+W5pcXxjX4C3Z4uNEACtEcYsbvakHz2GWUhMp9w4r8Hj2g4nfiTlEgeQ9Cvch
+    h+oP5sKhT8u/TJdVOzKXpql+FX9oswD2pO9KLk/JW1YN8hoEbJtII95j53uJ/fRF
+    GTKLzhjr7kbRn1a5XwDMAumyCs0iBcJV6obXq6PzpIJPAmkE6GzA1pHM4AQO1qbC
+    fiU+Ko/w7YYDXB/Bb34Ko4ckndivBFp4lyfrAnutqIQDGx+Qzm2cUgOGD2l9+g9r
+    XxUwo2kKUdslvUNNlmYgrr7a8Hsd3IaoZ71lKoJRTZI3t2uSFq3/qgBNuXGzGwJv
+    EscCcV/UbSzxXZgUOq0piQs69qvuQrHINHP+gmD1pQwE2kCB+5wVHtMp1dcJK2SS
+    jyypWhWWwRKN919BCL0Rukd4ErxpZDqmL0Q7KhqokwOzgCxOOh+/TqTQS6xGf8Gv
+    SMtX2vunBDTJAkOMfbQ+EfSuSGS19meKNJgqkN9XeT3Fj1UgLFLv35CQ51e7eAVi
+    HfLhvykoMxCIYsdxiMIne4FE9gxUcpbgoJTqq/8Atlinh+x9ZrJb+4ZBux0w0eoP
+    3cm9KL8i424l5PeVFO/fz2Qhc7InmpTnY2HRVeCc2AsKjSYcnkoP3j8DUy1GDt3+
+    jeA9sVPmvchTwFvtW45FtW+BNG0MeSIrCyXD/NXF3acjFe+9cx5+X+PWPb7LBkFu
+    xZkZVxD80evmvCacSLYhK3kFtGQPjLbgI+JRU4S3BXQSto7ig4NNA+K/QvRMABLI
+    Xc1BYfvQnWQzjAP3+4mkUIgrIZUmh5TlJptrq8OsKIpqiy8c2XuJ0Uk9G2ctUxNq
+    ue8D43yTedAV3s503FiKMfKqa/U6lMGKpbY409134Ly69kwYt6UVAw+2InCjePkM
+    h3VWBs/J49lc5Y+Pc4YrnD8TWIj76WPNkmkP1ed50SRLJOuMauSHZZ67mabF3wN/
+    SucoseO0fQTzd+UpoUAK4DszrMv5j7sAeA9pd5vMse0NwRY0
