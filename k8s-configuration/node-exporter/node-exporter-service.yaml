@@ -1,3 +1,18 @@
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: node-exporter-service
+# spec:
+#   selector:
+#     app: node-exporter
+#   type: NodePort
+#   ports:
+#     - name: metrics
+#       protocol: TCP
+#       port: 9100
+#       targetPort: 9100
+#       nodePort: 30002
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -5,11 +20,10 @@ metadata:
 spec:
   selector:
     app: node-exporter
-  type: NodePort
+  type: ClusterIP
   ports:
     - name: metrics
       protocol: TCP
       port: 9100
       targetPort: 9100
-      nodePort: 30002
 

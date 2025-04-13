@@ -34,10 +34,12 @@ builder.Services.AddSingleton<IMongoClient>(s =>
     var MONGO_USERNAME = Environment.GetEnvironmentVariable("MONGO_USERNAME");
     var MONGO_PASSWORD = Environment.GetEnvironmentVariable("MONGO_PASSWORD");
     var AUTH_MECHANISM = Environment.GetEnvironmentVariable("AUTH_MECHANISM");
-    // var connection_url = $"mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@mongodb-0.mongodb-service:27017,mongodb-1.mongodb-service:27017,mongodb-2.mongodb-service:27017/?replicaSet=rs0&authSource=admin";
-    var connection_url = $"mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@mongodb-0.mongodb-service:27017,mongodb-1.mongodb-service:27017,mongodb-2.mongodb-service:27017/?replicaSet=rs0&authMechanism=SCRAM-SHA-256&authSource=Locket";
+    //var connection_url = $"mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@mongodb-0.mongodb-service:27017,mongodb-1.mongodb-service:27017,mongodb-2.mongodb-service:27017/?replicaSet=rs0&authSource=admin";
+    
+    var connection_url = $"mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@k8s-loadbalancer.xn--hanh-0na.vn/database/?replicaSet=rs0&authMechanism=SCRAM-SHA-256&authSource=Locket";
 
-    // var connection_url = Environment.GetEnvironmentVariable("MongoDBConnectionURI");
+   // var connection_url = $"mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@mongodb-0.mongodb-headless:27017/?replicaSet=rs0&authMechanism=SCRAM-SHA-256&authSource=Locket";
+
  
     Console.WriteLine("Connection url " + connection_url);
     var client = new MongoClient(connection_url);

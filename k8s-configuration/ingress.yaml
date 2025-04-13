@@ -1,18 +1,17 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: mongodb-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: / 
+  name: ingress-cluster1
 spec:
+  ingressClassName: nginx
   rules:
-  - host: onion 
+  - host: 103.82.37.167
     http:
       paths:
-      - path: /mongo-express
+      - path: /node-exporter-service
         pathType: Prefix
         backend:
           service:
-            name: mongo-express
+            name: node-exporter-service
             port:
-              number: 8081
+              number: 9100

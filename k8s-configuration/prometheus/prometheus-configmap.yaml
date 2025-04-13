@@ -10,17 +10,19 @@ data:
       scrape_interval: 15s
 
     scrape_configs:
-      - job_name: 'prometheus'
+      - job_name: 'server-monitor'
+        metrics_path: /node-exporter-grafana/metrics
         static_configs:
-          - targets: ['localhost:9090']
-
-      - job_name: 'node-exporter'
-        kubernetes_sd_configs:
-          - role: endpoints
-        relabel_configs:
-          - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
-            action: keep
-            regex: node-exporter-service;metrics
-          - source_labels: [__meta_kubernetes_pod_node_name]
-            target_label: instance
-
+          - targets: ['k8s-loadbalancer.xn--hanh-0na.vn']
+      - job_name: 'database-monitor'
+        metrics_path: /node-exporter-database/metrics
+        static_configs:
+          - targets: ['k8s-loadbalancer.xn--hanh-0na.vn']
+      - job_name: 'node-exporter-worker11'
+        metrics_path: /node-exporter-cluster1-worker11/metrics
+        static_configs:
+          - targets: ['k8s-loadbalancer.xn--hanh-0na.vn']
+      - job_name: 'node-exporter-worker12'
+        metrics_path: /node-exporter-cluster1-worker12/metrics
+        static_configs:
+          - targets: ['k8s-loadbalancer.xn--hanh-0na.vn']
