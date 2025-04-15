@@ -5,7 +5,7 @@ metadata:
   labels:
     app: locketapi
 spec:
-  replicas: 1 
+  replicas: 2
   selector:
     matchLabels:
       app: locketapi
@@ -16,15 +16,15 @@ spec:
     spec:
       containers:
       - name: locketapi
-        image: onionsm/locketapi:2.6
+        image: onionsm/locketapi:2.8
         ports:
         - containerPort: 8081
         env: 
         - name: DatabaseName
           valueFrom:
             configMapKeyRef:
-              name: mongodb-configmap
-              key: DatabaseName
+              name: locketapi-configmap
+              key: MONGO_DATABASE
         - name: MONGO_USERNAME
           valueFrom:
             secretKeyRef:
@@ -38,40 +38,31 @@ spec:
         - name: MONGO_DATABASE
           valueFrom:
             configMapKeyRef:
-              name: mongodb-configmap
+              name: locketapi-configmap
               key: MONGO_DATABASE
         - name: PRIMARY_MONGO_NAME
           valueFrom:
             configMapKeyRef:
-              name: mongodb-configmap
+              name: locketapi-configmap
               key: PRIMARY_MONGO_NAME
-        - name: MONGO_PORT
-          valueFrom:
-            configMapKeyRef:
-              name: mongodb-configmap
-              key: MONGO_PORT
         - name: MONGO_HOST
           valueFrom:
             configMapKeyRef:
-              name: mongodb-configmap
+              name: locketapi-configmap
               key: MONGO_HOST
-        # - name: AUTH_MECHANISM
-        #   valueFrom:
-        #     configMapKeyRef:
-        #       name: mongodb-configmap
-        #       key: AUTH_MECHANISM
+
         - name: AUTH_MECHANISM
-          value: "SCRAM-SHA-256"    
-        - name: MongoDBConnectionURI
           valueFrom:
             configMapKeyRef:
-              name: mongodb-configmap
-              key: MongoDBConnectionURI
+              name: locketapi-configmap
+              key: AUTH_MECHANISM    
+
         - name: JWT_SECRET_KEY
           valueFrom:
             secretKeyRef:
               name: locketapi-secret
               key: JWT_SECRET_KEY
+
         - name: Issuer
           valueFrom:
             configMapKeyRef:

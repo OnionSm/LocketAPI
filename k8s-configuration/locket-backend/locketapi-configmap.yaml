@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: locketapi-configmap
+data:
+  Issuer: https://yourauthserver.com
+  Audience: OnionAPI
+  TokenLifespan: "60"
+  AUTH_MECHANISM: "SCRAM-SHA-256"
+  MONGO_HOST: "k8s-database.xn--hanh-0na.vn:30011,k8s-database.xn--hanh-0na.vn:30012,k8s-database.xn--hanh-0na.vn:30013"
+  PRIMARY_MONGO_NAME: mongodb_primary
+  MONGO_DATABASE: Locket

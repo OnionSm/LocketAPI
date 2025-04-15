@@ -1,17 +1,18 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ingress-cluster1
+  name: node-exporter-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
-  ingressClassName: nginx
   rules:
-  - host: 103.82.37.167
-    http:
-      paths:
-      - path: /node-exporter-service
-        pathType: Prefix
-        backend:
-          service:
-            name: node-exporter-service
-            port:
-              number: 9100
+    - host: k8s-cluster1.xn--hanh-0na.vn
+      http:
+        paths:
+          - path: /node
+            pathType: Prefix
+            backend:
+              service:
+                name: node-exporter-service
+                port:
+                  number: 9100
