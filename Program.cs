@@ -148,6 +148,6 @@ app.MapGet("/hello", () =>
 app.MapGet("", () =>
 {
     Console.WriteLine("Endpoint / was called.");
-    return "Welcome to LOCKET API";
+    return "Welcome to LOCKET API in CLUSTER 2";
 });
 app.Run();

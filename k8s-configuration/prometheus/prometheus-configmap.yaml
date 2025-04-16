@@ -26,3 +26,12 @@ data:
         metrics_path: /node-exporter-cluster1-worker12/metrics
         static_configs:
           - targets: ['k8s-loadbalancer.xn--hanh-0na.vn']
+      - job_name: 'node-exporter-worker21'
+        metrics_path: /node-exporter-cluster2-worker21/metrics
+        static_configs:
+          - targets: ['k8s-loadbalancer.xn--hanh-0na.vn']
+      - job_name: 'node-exporter-worker22'
+        metrics_path: /node-exporter-cluster2-worker22/metrics
+        static_configs:
+          - targets: ['k8s-loadbalancer.xn--hanh-0na.vn']
+      

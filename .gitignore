@@ -2,3 +2,4 @@
 # mongodb/
 env
 .env
+k8s-configuration/deploy-server/
