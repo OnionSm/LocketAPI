@@ -4,6 +4,8 @@ using MongoDB.Driver;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Net;
+using Microsoft.AspNetCore.Builder;
 
 
 DotNetEnv.Env.Load(); // Đọc tệp .env
@@ -37,8 +39,8 @@ builder.Services.AddSingleton<IMongoClient>(s =>
     var MONGO_HOST = Environment.GetEnvironmentVariable("MONGO_HOST");
     Console.WriteLine("user " + MONGO_USERNAME);
     Console.WriteLine("pass " + MONGO_PASSWORD);
-    var connection_url = $"mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@{MONGO_HOST}/?replicaSet=rs0&authMechanism={AUTH_MECHANISM}&authSource=Locket";
-    
+    var connection_url = $"mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@{MONGO_HOST}/Locket?replicaSet=rs0&authMechanism={AUTH_MECHANISM}&authSource=Locket&readPreference=primary";
+    // var connection_url = $"mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@{MONGO_HOST}/Locket?replicaSet=rs0&authMechanism={AUTH_MECHANISM}&authSource=Locket";
    
     Console.WriteLine("Connection url " + connection_url);
     var client = new MongoClient(connection_url);
@@ -145,9 +147,15 @@ app.MapGet("/hello", () =>
 });
 
 // Endpoint mặc định
-app.MapGet("", () =>
+app.MapGet("/", () =>
 {
-    Console.WriteLine("Endpoint / was called.");
-    return "Welcome to LOCKET API in CLUSTER 2";
+    var hostName = Dns.GetHostName();
+    Console.WriteLine($"Hostname: {hostName}");
+
+    return Results.Ok(new
+    {
+        message = "Welcome to LOCKET API in CLUSTER 2",
+        hostname = hostName
+    });
 });
 app.Run();

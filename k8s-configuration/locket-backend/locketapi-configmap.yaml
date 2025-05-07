@@ -7,6 +7,6 @@ data:
   Audience: OnionAPI
   TokenLifespan: "60"
   AUTH_MECHANISM: "SCRAM-SHA-256"
-  MONGO_HOST: "k8s-database.xn--hanh-0na.vn:30011,k8s-database.xn--hanh-0na.vn:30012,k8s-database.xn--hanh-0na.vn:30013"
+  MONGO_HOST: "103.82.134.110:30011,103.82.134.110:30012,103.82.134.110:30013"
   PRIMARY_MONGO_NAME: mongodb_primary
   MONGO_DATABASE: Locket

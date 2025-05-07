@@ -64,8 +64,10 @@ public class LoginController: ControllerBase
     [HttpPost("valid-email")]
     public async Task<ActionResult<bool>> CheckValidEmail([FromForm] string email)
     {
+        
         using (var session = await _mongo_client.StartSessionAsync())
         {
+            Console.WriteLine("CHECK VALID EMAIL WAS CALLED");
             session.StartTransaction();
             try
             {

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: locketapi
-        image: onionsm/locketapi:2.8
+        image: onionsm/locketapi:4.7.1
         ports:
         - containerPort: 8081
         env: 

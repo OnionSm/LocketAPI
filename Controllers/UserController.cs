@@ -34,6 +34,7 @@ public class UserController : ControllerBase
     [HttpPost("create")]
     public async Task<ActionResult<User>> CreateUser([FromForm] User user)
     {
+        Console.WriteLine("CREATE USER WAS CALLED");
 
         using (var session = await _mongo_client.StartSessionAsync())
         {

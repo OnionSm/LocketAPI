@@ -34,4 +34,8 @@ data:
         metrics_path: /node-exporter-cluster2-worker22/metrics
         static_configs:
           - targets: ['k8s-loadbalancer.xn--hanh-0na.vn']
+      - job_name: 'load-balancer'
+        metrics_path: /metrics
+        static_configs:
+          - targets: ['k8s-loadbalancer.xn--hanh-0na.vn:9100']
       
